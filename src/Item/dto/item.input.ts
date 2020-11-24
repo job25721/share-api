@@ -1,5 +1,4 @@
 import { Field, InputType } from '@nestjs/graphql';
-import { ItemLog } from 'src/ItemLog/dto/ItemLog.model';
 
 @InputType()
 export class ItemInput {

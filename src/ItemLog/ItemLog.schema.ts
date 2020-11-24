@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document, Types } from 'mongoose';
-import { Log } from './dto/ItemLog.model';
+import { Log } from './dto/itemLog.model';
 
 @Schema()
 class ItemLog {

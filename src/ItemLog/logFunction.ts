@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { Log } from './dto/ItemLog.model';
+import { Log } from './dto/itemLog.model';
 
 export function calculateHash(data): string {
   return 'sha256 hash';

@@ -6,9 +6,9 @@ import {
   ResolveField,
   Parent,
 } from '@nestjs/graphql';
-import { ItemLog } from 'src/ItemLog/dto/ItemLog.model';
+import { ItemLog } from 'src/ItemLog/dto/itemLog.model';
 
-import { ItemLogService } from 'src/ItemLog/ItemLog.service';
+import { ItemLogService } from 'src/ItemLog/itemLog.service';
 import { User } from 'src/User/dto/user.model';
 import { UserService } from 'src/User/user.service';
 import { ItemInput } from './dto/item.input';
