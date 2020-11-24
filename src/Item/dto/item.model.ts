@@ -19,4 +19,6 @@ export class Item {
   status: string;
   @Field(() => Date)
   createdDate: Date;
+  @Field(() => String)
+  logId: Types.ObjectId | string;
 }

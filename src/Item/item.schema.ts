@@ -17,6 +17,8 @@ class Item {
   status: string;
   @Prop()
   createdDate: Date;
+  @Prop({ type: Types.ObjectId, ref: 'ItemLog' })
+  logId: Types.ObjectId;
 }
 
 export type ItemDocument = Item & Document;
