@@ -1,0 +1,67 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type UserInfo {
+  firstName: String!
+  lastName: String!
+  birthDate: DateTime!
+  age: Float!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type User {
+  id: ID!
+  username: String!
+  password: String!
+  email: String!
+  avatar: String!
+  info: UserInfo!
+}
+
+type Item {
+  id: ID!
+  name: String!
+  description: String!
+  category: String!
+  tag: [String!]!
+  userId: String!
+  status: String!
+  createdDate: DateTime!
+  owner: User!
+}
+
+type Query {
+  getAllItem: [Item!]!
+}
+
+type Mutation {
+  createUser(user: NewUser!): User!
+  addNewItem(item: ItemInput!): Item!
+}
+
+input NewUser {
+  username: String!
+  password: String!
+  email: String
+  avatar: String
+  info: newUserInfo
+}
+
+input newUserInfo {
+  firstName: String!
+  lastName: String!
+  birthDate: DateTime
+  age: Float
+}
+
+input ItemInput {
+  name: String!
+  description: String!
+  category: String!
+  tag: [String!]
+}
