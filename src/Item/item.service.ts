@@ -40,6 +40,6 @@ export class ItemService {
 
   //how to request ??
   async requestItem(itemId: string): Promise<string> {
-    return 'requested';
+    return 'requested' + itemId;
   }
 }
