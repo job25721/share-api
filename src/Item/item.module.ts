@@ -9,9 +9,10 @@ import { ItemService } from './item.service';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'Item', schema: ItemSchema }]),
-    UserModule,
     ItemLogModule,
+    UserModule,
   ],
   providers: [ItemResolver, ItemService],
+  exports: [ItemService],
 })
 export class ItemModule {}

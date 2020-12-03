@@ -9,6 +9,7 @@ import {
 import { ItemLog } from 'src/ItemLog/dto/itemLog.model';
 
 import { ItemLogService } from 'src/ItemLog/itemLog.service';
+
 import { User } from 'src/User/dto/user.model';
 import { UserService } from 'src/User/user.service';
 import { ItemInput } from './dto/item.input';
@@ -27,14 +28,24 @@ export class ItemResolver {
     return await this.itemService.findAll();
   }
 
+  @Query(() => Item)
+  async getItemById(@Args('itemId') id: string): Promise<Item> {
+    return await this.itemService.findById(id);
+  }
+
+  @Query(() => [Item])
+  async getMyItem(@Args('ownerId') id: string): Promise<Item[]> {
+    return await this.itemService.findMyItem(id);
+  }
+
   @Mutation(() => Item)
   async addNewItem(@Args('item') newItem: ItemInput): Promise<Item> {
     return await this.itemService.create(newItem);
   }
 
   @ResolveField(() => User)
-  async owner(@Parent() { userId }: Item): Promise<User> {
-    return await this.userService.findById(userId);
+  async owner(@Parent() { ownerId }: Item): Promise<User> {
+    return await this.userService.findById(ownerId);
   }
 
   @ResolveField(() => ItemLog)

@@ -12,7 +12,7 @@ class Item {
   @Prop()
   tag: string[];
   @Prop({ type: Types.ObjectId, ref: 'User' })
-  userId: Types.ObjectId;
+  ownerId: Types.ObjectId;
   @Prop()
   status: string;
   @Prop()

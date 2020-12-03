@@ -27,4 +27,8 @@ export class ItemLogService {
   async findById(logId: Types.ObjectId | string): Promise<ItemLog> {
     return await this.itemLogModel.findById(logId);
   }
+
+  async findByItemId(itemId: string): Promise<ItemLog> {
+    return await this.itemLogModel.findOne({ itemId });
+  }
 }
