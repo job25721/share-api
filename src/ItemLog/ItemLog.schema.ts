@@ -5,7 +5,7 @@ import { Log } from './dto/itemLog.model';
 @Schema()
 class ItemLog {
   @Prop({ type: Types.ObjectId, ref: 'Item' })
-  itemId: Types.ObjectId | string;
+  itemId: Types.ObjectId;
   @Prop()
   logs: Log[];
 }

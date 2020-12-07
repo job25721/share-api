@@ -10,18 +10,36 @@ export class ItemLogService {
     @InjectModel('ItemLog') private itemLogModel: Model<ItemLogDocument>,
   ) {}
 
-  async InitLog(
-    itemId: Types.ObjectId | string,
-    actorId: Types.ObjectId | string,
-  ): Promise<ItemLog> {
+  async InitLog(itemId: string, actorId: string): Promise<ItemLog> {
     const newItemLogDto: ItemLog = {
-      itemId,
+      itemId: new Types.ObjectId(itemId),
       logs: [
         createItemLog(new Types.ObjectId(actorId), 'ได้เพิ่มของไปที่ SHARE'),
       ],
     };
     const itemLog = new this.itemLogModel(newItemLogDto);
     return await itemLog.save();
+  }
+
+  async addLog({ itemId, actorId, action }): Promise<ItemLog> {
+    try {
+      const existLog = await this.itemLogModel.findOne({
+        itemId: Types.ObjectId(itemId),
+      });
+      console.log('existlog');
+      console.log(existLog);
+
+      if (existLog === null) {
+        throw new Error('this item is private');
+      }
+
+      const newLog = createItemLog(actorId, action);
+      newLog.prevHash = existLog.logs[existLog.logs.length - 1].hash;
+      existLog.logs.push(newLog);
+      return existLog.save();
+    } catch (err) {
+      throw err;
+    }
   }
 
   async findById(logId: Types.ObjectId | string): Promise<ItemLog> {

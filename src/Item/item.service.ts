@@ -27,11 +27,11 @@ export class ItemService {
 
   async create(createItemDto: ItemInput): Promise<Item> {
     const now = new Date(Date.now());
-    const userId = new Types.ObjectId('5fbd2e2d33b9f31610ef1f54');
+    const userId = '5fbd2e2d33b9f31610ef1f54';
     const newItem = new this.itemModel(createItemDto);
     newItem.createdDate = now;
     newItem.status = 'active';
-    newItem.ownerId = userId;
+    newItem.ownerId = new Types.ObjectId(userId);
     //addLog
     const itemLog = await this.itemLogService.InitLog(newItem.id, userId);
     newItem.logId = new Types.ObjectId(itemLog.id);
