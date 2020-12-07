@@ -35,7 +35,7 @@ export class ItemResolver {
 
   @Query(() => [Item])
   async getMyItem(@Args('ownerId') id: string): Promise<Item[]> {
-    return await this.itemService.findMyItem(id);
+    return await this.itemService.findMyAllItem(id);
   }
 
   @Mutation(() => Item)

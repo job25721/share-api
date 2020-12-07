@@ -11,7 +11,8 @@ export class ItemLogService {
     @InjectModel('ItemLog') private itemLogModel: Model<ItemLogDocument>,
   ) {}
 
-  async InitLog(itemId: string, actorId: string): Promise<ItemLog> {
+  async InitLog(data: { itemId: string; actorId: string }): Promise<ItemLog> {
+    const { itemId, actorId } = data;
     const newItemLogDto: ItemLog = {
       itemId: new Types.ObjectId(itemId),
       logs: [
@@ -22,13 +23,16 @@ export class ItemLogService {
     return await itemLog.save();
   }
 
-  async addLog({ itemId, actorId, action }): Promise<ItemLog> {
+  async addLog(data: {
+    itemId: string;
+    actorId: string;
+    action: string;
+  }): Promise<ItemLog> {
+    const { itemId, actorId, action } = data;
     try {
       const existLog = await this.itemLogModel.findOne({
         itemId: Types.ObjectId(itemId),
       });
-      console.log('existlog');
-      console.log(existLog);
 
       if (existLog === null) {
         throw new Error('no such item');
@@ -37,7 +41,7 @@ export class ItemLogService {
       const newLog = createItemLog(Types.ObjectId(actorId), action);
       newLog.prevHash = existLog.logs[existLog.logs.length - 1].hash;
       existLog.logs.push(newLog);
-      return existLog.save();
+      return await existLog.save();
     } catch (err) {
       throw err;
     }

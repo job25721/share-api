@@ -27,8 +27,16 @@ export class ItemService {
     }
   }
 
-  async findMyItem(ownerId: string): Promise<Item[]> {
+  async findMyAllItem(ownerId: string): Promise<Item[]> {
     return await this.itemModel.find({ ownerId: Types.ObjectId(ownerId) });
+  }
+
+  async findMyItem(data: { ownerId: string; itemId: string }): Promise<Item> {
+    const { ownerId, itemId } = data;
+    return await this.itemModel.findOne({
+      ownerId: Types.ObjectId(ownerId),
+      _id: Types.ObjectId(itemId),
+    });
   }
 
   async create(createItemDto: ItemInput): Promise<Item> {
@@ -39,7 +47,10 @@ export class ItemService {
     newItem.status = 'active';
     newItem.ownerId = new Types.ObjectId(userId);
     //addLog
-    const itemLog = await this.itemLogService.InitLog(newItem.id, userId);
+    const itemLog = await this.itemLogService.InitLog({
+      itemId: newItem.id,
+      actorId: userId,
+    });
     newItem.logId = new Types.ObjectId(itemLog.id);
     return await newItem.save();
   }
