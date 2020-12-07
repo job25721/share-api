@@ -48,4 +48,14 @@ export class RequestService {
       return err;
     }
   }
+
+  async findById(reqId: string): Promise<Request> {
+    try {
+      const res = await this.requestModel.findById(reqId);
+      if (res === null) throw new Error('No request');
+      return res;
+    } catch (err) {
+      return err;
+    }
+  }
 }

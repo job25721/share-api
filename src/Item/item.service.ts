@@ -17,7 +17,7 @@ export class ItemService {
     return await this.itemModel.find();
   }
 
-  async findById(id: string): Promise<Item> {
+  async findById(id: Types.ObjectId | string): Promise<Item> {
     try {
       const res = await this.itemModel.findById(id);
       if (res === null) throw new Error("item you're looking not found");
