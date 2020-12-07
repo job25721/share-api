@@ -9,7 +9,6 @@ import { ItemLogService } from './itemLog.service';
     MongooseModule.forFeature([{ name: 'ItemLog', schema: ItemLogSchema }]),
     UserModule,
   ],
-  providers: [ItemLogService],
   exports: [ItemLogService],
 })
 export class ItemLogModule {}
