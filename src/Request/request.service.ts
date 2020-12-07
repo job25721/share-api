@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Item } from 'src/Item/dto/item.model';
-import { ItemService } from 'src/Item/item.service';
-import { itemStatus } from 'src/Item/item.status';
-import { ItemLogService } from 'src/ItemLog/itemLog.service';
-import { UserService } from 'src/User/user.service';
+import { Item } from '../Item/dto/item.model';
+import { ItemService } from '../Item/item.service';
+import { itemStatus } from '../Item/item.status';
+import { ItemLogService } from '../ItemLog/itemLog.service';
+import { UserService } from '../User/user.service';
 import { RequestActivityDto } from './dto/request.input';
 import { Request } from './dto/request.model';
 import { RequestDocument } from './request.schema';

@@ -6,10 +6,10 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
-import { Item } from 'src/Item/dto/item.model';
-import { ItemService } from 'src/Item/item.service';
-import { User } from 'src/User/dto/user.model';
-import { UserService } from 'src/User/user.service';
+import { Item } from '../Item/dto/item.model';
+import { ItemService } from '../Item/item.service';
+import { User } from '../User/dto/user.model';
+import { UserService } from '../User/user.service';
 import { RequestActivityDto, RequestInput } from './dto/request.input';
 import { Request } from './dto/request.model';
 import { RequestService } from './request.service';

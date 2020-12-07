@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { UserService } from 'src/User/user.service';
+import { UserService } from '../User/user.service';
 import { ItemLog } from './dto/itemLog.model';
 import { ItemLogDocument } from './ItemLog.schema';
 import { createItemLog } from './logFunction';

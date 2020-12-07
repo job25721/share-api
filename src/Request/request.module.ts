@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { ItemModule } from 'src/Item/item.module';
-import { ItemLogModule } from 'src/ItemLog/itemLog.module';
-import { UserModule } from 'src/User/user.module';
+import { ItemModule } from '../Item/item.module';
+import { ItemLogModule } from '../ItemLog/itemLog.module';
+import { UserModule } from '../User/user.module';
 import { RequestResolver } from './request.resolver';
 import { RequestSchema } from './request.schema';
 import { RequestService } from './request.service';

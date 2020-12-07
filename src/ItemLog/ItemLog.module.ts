@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { UserModule } from 'src/User/user.module';
+import { UserModule } from '../User/user.module';
 import { ItemLogSchema } from './ItemLog.schema';
 import { ItemLogService } from './itemLog.service';
 
