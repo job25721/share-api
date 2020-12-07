@@ -7,6 +7,8 @@ class Request {
   itemId: Types.ObjectId;
   @Prop({ type: Types.ObjectId, ref: 'User' })
   requestPersonId: Types.ObjectId;
+  @Prop({ type: Types.ObjectId, ref: 'User' })
+  requestToPersonId: Types.ObjectId;
   @Prop()
   timestamp: Date;
   @Prop()

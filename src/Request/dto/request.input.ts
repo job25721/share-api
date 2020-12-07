@@ -13,9 +13,9 @@ export class RequestInput {
 }
 
 @InputType()
-export class AcceptRequestDto {
+export class RequestActivityDto {
   @Field(() => String)
   reqId: string;
   @Field(() => String)
-  acceptPersonId: string;
+  actionPersonId: string;
 }

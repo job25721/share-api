@@ -13,6 +13,7 @@ import { RequestService } from './request.service';
     ItemLogModule,
     UserModule,
     ItemModule,
+    UserModule,
   ],
   providers: [RequestService, RequestResolver],
 })

@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
+import { UserService } from 'src/User/user.service';
 import { ItemLog } from './dto/itemLog.model';
 import { ItemLogDocument } from './ItemLog.schema';
 import { createItemLog } from './logFunction';
@@ -9,13 +10,20 @@ import { createItemLog } from './logFunction';
 export class ItemLogService {
   constructor(
     @InjectModel('ItemLog') private itemLogModel: Model<ItemLogDocument>,
+    private readonly userService: UserService,
   ) {}
 
   async InitLog(data: { itemId: string; actorId: string }): Promise<ItemLog> {
     const { itemId, actorId } = data;
+    const actor = await this.userService.findById(actorId);
     const newItemLogDto: ItemLog = {
       itemId: Types.ObjectId(itemId),
-      logs: [createItemLog(Types.ObjectId(actorId), 'ได้เพิ่มของไปที่ SHARE')],
+      logs: [
+        createItemLog(
+          Types.ObjectId(actorId),
+          `${actor.info.firstName} ได้เพิ่มของไปที่ SHARE`,
+        ),
+      ],
     };
     const itemLog = new this.itemLogModel(newItemLogDto);
     return await itemLog.save();

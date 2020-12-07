@@ -9,6 +9,8 @@ export class Request {
   itemId: Types.ObjectId | string;
   @Field(() => String)
   requestPersonId: Types.ObjectId | string;
+  @Field(() => String)
+  requestToPersonId: Types.ObjectId | string;
   @Field(() => Date)
   timestamp: Date;
   @Field(() => String)

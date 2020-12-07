@@ -42,7 +42,7 @@ export class ItemService {
 
   async create(createItemDto: ItemInput): Promise<Item> {
     const now = new Date(Date.now());
-    const userId = '5fbd2e2d33b9f31610ef1f54';
+    const userId = '5fce7401f9a69cb3f7db04ad';
     const newItem = new this.itemModel(createItemDto);
     newItem.createdDate = now;
     newItem.status = itemStatus.active;

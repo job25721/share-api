@@ -10,7 +10,7 @@ import { Item } from 'src/Item/dto/item.model';
 import { ItemService } from 'src/Item/item.service';
 import { User } from 'src/User/dto/user.model';
 import { UserService } from 'src/User/user.service';
-import { AcceptRequestDto, RequestInput } from './dto/request.input';
+import { RequestActivityDto, RequestInput } from './dto/request.input';
 import { Request } from './dto/request.model';
 import { RequestService } from './request.service';
 
@@ -36,13 +36,32 @@ export class RequestResolver {
   }
 
   @Mutation(() => Item)
-  async acceptRequest(@Args('reqData') data: AcceptRequestDto): Promise<Item> {
+  async acceptRequest(
+    @Args('reqData') data: RequestActivityDto,
+  ): Promise<Item> {
     return await this.requestService.acceptRequest(data);
+  }
+
+  @Mutation(() => Item)
+  async rejectRequest(
+    @Args('reqData') data: RequestActivityDto,
+  ): Promise<Item> {
+    return await this.requestService.rejectRequest(data);
   }
 
   @Query(() => Request)
   getReqById(@Args('reqId') reqId: string): Promise<Request> {
     return this.requestService.findById(reqId);
+  }
+
+  @Query(() => [Request])
+  getMyRequests(@Args('myId') id: string): Promise<Request[]> {
+    return this.requestService.findMyRequests(id);
+  }
+
+  @Query(() => [Request])
+  getMySendRequests(@Args('myId') id: string): Promise<Request[]> {
+    return this.requestService.findMySendRequests(id);
   }
 
   @ResolveField(() => Item)
@@ -53,5 +72,10 @@ export class RequestResolver {
   @ResolveField(() => User)
   requestPerson(@Parent() { requestPersonId }: Request): Promise<User> {
     return this.userService.findById(requestPersonId);
+  }
+
+  @ResolveField(() => User)
+  requestToPerson(@Parent() { requestToPersonId }: Request): Promise<User> {
+    return this.userService.findById(requestToPersonId);
   }
 }
