@@ -18,7 +18,13 @@ export class ItemService {
   }
 
   async findById(id: string): Promise<Item> {
-    return await this.itemModel.findById(id);
+    try {
+      const res = await this.itemModel.findById(id);
+      if (res === null) throw new Error("item you're looking not found");
+      return res;
+    } catch (err) {
+      return err;
+    }
   }
 
   async findMyItem(ownerId: string): Promise<Item[]> {

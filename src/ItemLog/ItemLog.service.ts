@@ -4,6 +4,7 @@ import { Model, Types } from 'mongoose';
 import { ItemLog } from './dto/itemLog.model';
 import { ItemLogDocument } from './ItemLog.schema';
 import { createItemLog } from './logFunction';
+
 @Injectable()
 export class ItemLogService {
   constructor(
@@ -30,10 +31,10 @@ export class ItemLogService {
       console.log(existLog);
 
       if (existLog === null) {
-        throw new Error('this item is private');
+        throw new Error('no such item');
       }
 
-      const newLog = createItemLog(actorId, action);
+      const newLog = createItemLog(Types.ObjectId(actorId), action);
       newLog.prevHash = existLog.logs[existLog.logs.length - 1].hash;
       existLog.logs.push(newLog);
       return existLog.save();

@@ -34,12 +34,12 @@ export class RequestService {
       console.log(existRequest);
 
       if (existRequest === null) {
-        const newRequest = new this.requestModel(reqDto);
         await this.itemLogService.addLog({
           itemId: reqData.itemId,
           actorId: reqData.requestPersonId,
           action: `ทำการรีเควสของชิ้นนี้`,
         });
+        const newRequest = new this.requestModel(reqDto);
         return newRequest.save();
       } else {
         throw new Error(`you has exist request an item ${reqDto.itemId}`);

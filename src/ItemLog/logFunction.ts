@@ -1,8 +1,10 @@
 import { Types } from 'mongoose';
 import { Log } from './dto/itemLog.model';
 
-export function calculateHash(data): string {
-  return 'sha256 hash';
+import { SHA256 } from 'crypto-js';
+
+export function calculateHash(data: any): string {
+  return SHA256(JSON.stringify(data)).toString();
 }
 
 export function createItemLog(
