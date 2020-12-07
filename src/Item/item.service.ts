@@ -2,9 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ItemLogService } from 'src/ItemLog/itemLog.service';
-import { ItemInput } from './dto/item.input';
+import { changeStatus, ItemInput } from './dto/item.input';
 import { Item } from './dto/item.model';
 import { ItemDocument } from './item.schema';
+import { itemStatus } from './item.status';
 
 @Injectable()
 export class ItemService {
@@ -44,8 +45,8 @@ export class ItemService {
     const userId = '5fbd2e2d33b9f31610ef1f54';
     const newItem = new this.itemModel(createItemDto);
     newItem.createdDate = now;
-    newItem.status = 'active';
-    newItem.ownerId = new Types.ObjectId(userId);
+    newItem.status = itemStatus.active;
+    newItem.ownerId = Types.ObjectId(userId);
     //addLog
     const itemLog = await this.itemLogService.InitLog({
       itemId: newItem.id,
@@ -55,8 +56,14 @@ export class ItemService {
     return await newItem.save();
   }
 
-  //how to request ??
-  async requestItem(itemId: string): Promise<string> {
-    return 'requested' + itemId;
+  async changeItemStatus(data: changeStatus): Promise<Item> {
+    const { itemId, status } = data;
+    try {
+      const res = await this.itemModel.findById(itemId);
+      res.status = status;
+      return res.save();
+    } catch (error) {
+      return error;
+    }
   }
 }

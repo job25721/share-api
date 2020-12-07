@@ -67,4 +67,8 @@ export class RequestService {
       return err;
     }
   }
+
+  acceptRequest(): void {
+    return;
+  }
 }

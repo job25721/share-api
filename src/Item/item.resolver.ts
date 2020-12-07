@@ -12,9 +12,10 @@ import { ItemLogService } from 'src/ItemLog/itemLog.service';
 
 import { User } from 'src/User/dto/user.model';
 import { UserService } from 'src/User/user.service';
-import { ItemInput } from './dto/item.input';
+import { ItemInput, changeStatus } from './dto/item.input';
 import { Item } from './dto/item.model';
 import { ItemService } from './item.service';
+
 @Resolver(() => Item)
 export class ItemResolver {
   constructor(
@@ -36,6 +37,11 @@ export class ItemResolver {
   @Query(() => [Item])
   async getMyItem(@Args('ownerId') id: string): Promise<Item[]> {
     return await this.itemService.findMyAllItem(id);
+  }
+
+  @Mutation(() => Item)
+  async updateItemStatus(@Args('data') data: changeStatus): Promise<Item> {
+    return await this.itemService.changeItemStatus(data);
   }
 
   @Mutation(() => Item)

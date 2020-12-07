@@ -14,10 +14,8 @@ export class ItemLogService {
   async InitLog(data: { itemId: string; actorId: string }): Promise<ItemLog> {
     const { itemId, actorId } = data;
     const newItemLogDto: ItemLog = {
-      itemId: new Types.ObjectId(itemId),
-      logs: [
-        createItemLog(new Types.ObjectId(actorId), 'ได้เพิ่มของไปที่ SHARE'),
-      ],
+      itemId: Types.ObjectId(itemId),
+      logs: [createItemLog(Types.ObjectId(actorId), 'ได้เพิ่มของไปที่ SHARE')],
     };
     const itemLog = new this.itemLogModel(newItemLogDto);
     return await itemLog.save();
