@@ -1,9 +1,10 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 
 @InputType()
 export class changeStatus {
   @Field(() => String)
-  itemId: string;
+  itemId: string | Types.ObjectId;
   @Field(() => String)
   status: string;
 }

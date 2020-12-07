@@ -10,7 +10,7 @@ import { Item } from 'src/Item/dto/item.model';
 import { ItemService } from 'src/Item/item.service';
 import { User } from 'src/User/dto/user.model';
 import { UserService } from 'src/User/user.service';
-import { RequestInput } from './dto/request.input';
+import { AcceptRequestDto, RequestInput } from './dto/request.input';
 import { Request } from './dto/request.model';
 import { RequestService } from './request.service';
 
@@ -33,6 +33,11 @@ export class RequestResolver {
       reason,
       wantedRate,
     });
+  }
+
+  @Mutation(() => Item)
+  async acceptRequest(@Args('reqData') data: AcceptRequestDto): Promise<Item> {
+    return await this.requestService.acceptRequest(data);
   }
 
   @Query(() => Request)

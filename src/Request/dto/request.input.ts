@@ -11,3 +11,11 @@ export class RequestInput {
   @Field(() => Number)
   wantedRate: number;
 }
+
+@InputType()
+export class AcceptRequestDto {
+  @Field(() => String)
+  reqId: string;
+  @Field(() => String)
+  acceptPersonId: string;
+}
