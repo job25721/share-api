@@ -38,7 +38,7 @@ export class RequestService {
         if (item.ownerId == requestPersonId) {
           throw new Error("can't request your own item");
         }
-        if (item.status !== itemStatus.active) {
+        if (item.status !== itemStatus.available) {
           throw new Error("item is not available can't request !!");
         }
 
@@ -70,7 +70,6 @@ export class RequestService {
   async findById(reqId: string): Promise<Request> {
     try {
       const res = await this.requestModel.findById(reqId);
-
       if (res === null) throw new Error('No request');
       return res;
     } catch (err) {
@@ -98,7 +97,7 @@ export class RequestService {
       if (ownerId != actionPersonId) {
         throw new Error('accept person is not item owner');
       }
-      if (status !== itemStatus.active) {
+      if (status !== itemStatus.available) {
         throw new Error(
           "can't accept this request because request is already accepted or item is not available",
         );
@@ -115,7 +114,7 @@ export class RequestService {
       });
       return await this.itemService.changeItemStatus({
         itemId,
-        status: itemStatus.pending,
+        status: itemStatus.accepted,
       });
     } catch (error) {
       return error;

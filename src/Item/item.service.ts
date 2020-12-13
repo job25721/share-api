@@ -45,7 +45,7 @@ export class ItemService {
     const userId = '5fce7401f9a69cb3f7db04ad';
     const newItem = new this.itemModel(createItemDto);
     newItem.createdDate = now;
-    newItem.status = itemStatus.active;
+    newItem.status = itemStatus.available;
     newItem.ownerId = Types.ObjectId(userId);
     //addLog
     const itemLog = await this.itemLogService.InitLog({

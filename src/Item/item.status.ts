@@ -1,6 +1,12 @@
 export const itemStatus = {
-  active: 'active',
-  private: 'private',
-  inactive: 'inactive',
-  pending: 'pending',
+  hidden: 'hidden',
+  available: 'available',
+  accepted: 'accepted',
+  delivered: 'delivered',
+};
+
+export const requestStatus = {
+  requested: '1',
+  accepted: '2',
+  rejected: '3',
 };
