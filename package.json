@@ -31,9 +31,11 @@
     "@types/mongoose": "^5.10.1",
     "apollo-server-express": "^2.19.0",
     "crypto-js": "^4.0.0",
+    "global": "^4.4.0",
     "graphql": "^15.4.0",
     "graphql-tools": "^7.0.1",
     "mongoose": "^5.10.15",
+    "pm2": "^4.5.0",
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3"
