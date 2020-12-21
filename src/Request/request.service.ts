@@ -175,6 +175,13 @@ export class RequestService {
         chatUid: receiver._chat_uid,
         itemId,
       });
+      await this.itemLogService.addLog({
+        itemId: itemId.toString(),
+        actorId: requestPersonId,
+        action: `ห้องแชทสำหรับส่งต่อ ${
+          (await this.itemService.findById(itemId.toString())).name
+        } ได้ถุกปิด`,
+      });
       return await this.itemService.changeItemStatus({
         itemId,
         status: itemStatus.delivered,
@@ -212,6 +219,11 @@ export class RequestService {
       await this.chatService.disableChat({
         chatUid: giver._chat_uid,
         itemId,
+      });
+      await this.itemLogService.addLog({
+        itemId: itemId.toString(),
+        actorId: actionPersonId,
+        action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกปิด`,
       });
       await request.save();
       return item;
