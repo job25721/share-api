@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Item } from '../Item/dto/item.model';
 import { ItemService } from '../Item/item.service';
-import { itemStatus } from '../Item/item.status';
+import { itemStatus, requestStatus } from '../status';
 import { ItemLogService } from '../ItemLog/itemLog.service';
 import { UserService } from '../User/user.service';
 import { RequestActivityDto } from './dto/request.input';
@@ -33,6 +33,8 @@ export class RequestService {
         requestPersonId: Types.ObjectId(requestPersonId),
       });
 
+      console.log(existRequest);
+
       if (existRequest === null) {
         const item = await this.itemService.findById(itemId);
         if (item.ownerId == requestPersonId) {
@@ -56,6 +58,7 @@ export class RequestService {
           timestamp: new Date(Date.now()),
           reason,
           wantedRate,
+          status: requestStatus.requested,
         };
         const newRequest = new this.requestModel(reqDto);
         return await newRequest.save();
@@ -90,7 +93,7 @@ export class RequestService {
   async acceptRequest(data: RequestActivityDto): Promise<Item> {
     const { reqId, actionPersonId } = data;
     try {
-      const req = await this.findById(reqId);
+      const req = await this.requestModel.findById(reqId);
 
       const { ownerId, status } = await this.itemService.findById(req.itemId);
       if (ownerId === undefined) throw new Error('no this request id');
@@ -102,11 +105,16 @@ export class RequestService {
           "can't accept this request because request is already accepted or item is not available",
         );
       }
+
+      if (req.status !== requestStatus.requested) {
+        throw new Error('this request already rejected or accepted');
+      }
       const { itemId, requestPersonId } = req;
 
       const giver = await this.userService.findById(actionPersonId);
       const receiver = await this.userService.findById(requestPersonId);
-
+      req.status = requestStatus.accepted;
+      await req.save();
       await this.itemLogService.addLog({
         itemId: itemId.toString(),
         actorId: actionPersonId,
@@ -116,8 +124,39 @@ export class RequestService {
         itemId,
         status: itemStatus.accepted,
       });
-    } catch (error) {
-      return error;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  async acceptDelivered(data: RequestActivityDto): Promise<Item> {
+    const { reqId, actionPersonId } = data;
+    try {
+      const req = await this.findById(reqId);
+
+      if (actionPersonId != req.requestPersonId) {
+        throw new Error("You're not a request person");
+      }
+      if (req.status !== requestStatus.accepted) {
+        throw new Error('this request is not accept by owner');
+      }
+
+      const { itemId, requestPersonId, requestToPersonId } = req;
+
+      const giver = await this.userService.findById(requestToPersonId);
+      const receiver = await this.userService.findById(requestPersonId);
+
+      await this.itemLogService.addLog({
+        itemId: itemId.toString(),
+        actorId: actionPersonId,
+        action: `${receiver.info.firstName} ได้รับของจาก ${giver.info.firstName} แล้ว สิ้นสุดกระบวนการ SHARE`,
+      });
+      return await this.itemService.changeItemStatus({
+        itemId,
+        status: itemStatus.delivered,
+      });
+    } catch (err) {
+      return err;
     }
   }
 
@@ -129,6 +168,9 @@ export class RequestService {
 
       const item = await this.itemService.findById(itemId);
       const { ownerId } = item;
+
+      if (request.status === requestStatus.rejected)
+        throw new Error('this item already rejected');
 
       if (ownerId === undefined) throw new Error('no this request id');
       if (ownerId != actionPersonId) {
@@ -142,8 +184,8 @@ export class RequestService {
         actorId: actionPersonId,
         action: `${giver.info.firstName} ได้ปฏิเสธที่จะส่งต่อของให้ ${receiver.info.firstName}`,
       });
-
-      await request.remove();
+      request.status = requestStatus.rejected;
+      await request.save();
       return item;
 
       //maybe send noti to reciever

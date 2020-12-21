@@ -15,6 +15,8 @@ class Request {
   reason: string;
   @Prop()
   wantedRate: number;
+  @Prop()
+  status: string;
 }
 
 export type RequestDocument = Request & Document;

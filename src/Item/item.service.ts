@@ -5,7 +5,7 @@ import { ItemLogService } from '../ItemLog/itemLog.service';
 import { changeStatus, ItemInput } from './dto/item.input';
 import { Item } from './dto/item.model';
 import { ItemDocument } from './item.schema';
-import { itemStatus } from './item.status';
+import { itemStatus } from '../status';
 
 @Injectable()
 export class ItemService {
@@ -42,7 +42,7 @@ export class ItemService {
 
   async create(createItemDto: ItemInput): Promise<Item> {
     const now = new Date(Date.now());
-    const userId = '5fce7401f9a69cb3f7db04ad';
+    const userId = '5fce73e4f9a69cb3f7db04ac';
     const newItem = new this.itemModel(createItemDto);
     newItem.createdDate = now;
     newItem.status = itemStatus.available;

@@ -6,7 +6,7 @@ export const itemStatus = {
 };
 
 export const requestStatus = {
-  requested: '1',
-  accepted: '2',
-  rejected: '3',
+  requested: 'requested',
+  accepted: 'accepted',
+  rejected: 'rejected',
 };

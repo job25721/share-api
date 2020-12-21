@@ -4,5 +4,6 @@ import { ChatSchema } from './chat.schema';
 
 @Module({
   imports: [MongooseModule.forFeature([{ name: 'Chat', schema: ChatSchema }])],
+  providers: [],
 })
-export class Chat {}
+export class ChatModule {}

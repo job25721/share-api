@@ -10,6 +10,10 @@ class Chat {
   to: Types.ObjectId;
   @Prop()
   data: ChatMessage[];
+  @Prop({ type: Types.ObjectId, ref: 'Ietm' })
+  for: Types.ObjectId;
+  @Prop()
+  active: boolean;
 }
 
 export type ChatDocument = Chat & Document;

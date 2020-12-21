@@ -36,6 +36,11 @@ export class RequestResolver {
   }
 
   @Mutation(() => Item)
+  async acceptDelivered(@Args('reqData') data: RequestActivityDto) {
+    return await this.requestService.acceptDelivered(data);
+  }
+
+  @Mutation(() => Item)
   async acceptRequest(
     @Args('reqData') data: RequestActivityDto,
   ): Promise<Item> {

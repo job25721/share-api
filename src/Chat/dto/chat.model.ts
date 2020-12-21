@@ -19,4 +19,8 @@ export class Chat {
   to: Types.ObjectId;
   @Field(() => [ChatMessage])
   data: ChatMessage[];
+  @Field(() => String)
+  for: Types.ObjectId | string;
+  @Field(() => Boolean)
+  active: boolean;
 }

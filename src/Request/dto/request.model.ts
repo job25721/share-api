@@ -17,4 +17,6 @@ export class Request {
   reason: string;
   @Field(() => Number)
   wantedRate: number;
+  @Field(() => String)
+  status: string;
 }
