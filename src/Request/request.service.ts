@@ -63,8 +63,17 @@ export class RequestService {
           status: requestStatus.requested,
         };
         const newRequest = new this.requestModel(reqDto);
+
         const newChat = await this.chatService.create(itemId);
-        // let chat_uid = newChat.id
+
+        await this.userService.addChatRoom({
+          chatUid: newChat.id,
+          userId: reqDto.requestPersonId,
+        });
+        await this.userService.addChatRoom({
+          chatUid: newChat.id,
+          userId: reqDto.requestToPersonId,
+        });
 
         return await newRequest.save();
       } else {

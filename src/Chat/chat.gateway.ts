@@ -10,12 +10,7 @@ import {
 
 import { Socket, Server } from 'socket.io';
 import { ChatService } from './chat.service';
-
-interface msgPayload {
-  from: string;
-  to: string;
-  msg: any;
-}
+import { ChatMessage } from './dto/chat.model';
 
 @WebSocketGateway()
 export class ChatGateway
@@ -25,10 +20,10 @@ export class ChatGateway
 
   @WebSocketServer() wss: Server;
 
-  handleDisconnect(client: any) {
+  handleDisconnect(client: Socket) {
     this.logger.log(`disconnected client id : ${client.id}`);
   }
-  handleConnection(client: any, ...args: any[]) {
+  handleConnection(client: Socket, ...args: any[]) {
     this.logger.log(`connected client id : ${client.id}`);
   }
 
@@ -36,8 +31,12 @@ export class ChatGateway
     this.logger.log('Init');
   }
   @SubscribeMessage('toServer')
-  handleMessage(client: Socket, payload: msgPayload): void {
-    console.log(payload);
-    this.wss.emit('toClient', payload);
+  async handleMessage(client: Socket, payload: ChatMessage): Promise<void> {
+    try {
+      await this.chatService.saveChat({ chatUid: null, payload });
+      this.wss.emit('toClient', payload);
+    } catch (error) {
+      this.wss.emit('onError', error.message);
+    }
   }
 }

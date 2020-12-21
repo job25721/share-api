@@ -27,4 +27,6 @@ export class User {
   avatar: string;
   @Field(() => UserInfo)
   info: UserInfo;
+  @Field(() => [String])
+  _chat_uid: Types.ObjectId[] | string[];
 }

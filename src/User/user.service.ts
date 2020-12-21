@@ -17,4 +17,14 @@ export class UserService {
   async findById(id: Types.ObjectId | string): Promise<User> {
     return await this.userModel.findById(id);
   }
+
+  async addChatRoom(queryData: {
+    chatUid: Types.ObjectId;
+    userId: Types.ObjectId | string;
+  }): Promise<User> {
+    const { userId, chatUid } = queryData;
+    const user = await this.userModel.findById(userId);
+    user._chat_uid = [...user._chat_uid, chatUid];
+    return await user.save();
+  }
 }
