@@ -165,6 +165,10 @@ export class RequestService {
         actorId: actionPersonId,
         action: `${receiver.info.firstName} ได้รับของจาก ${giver.info.firstName} แล้ว สิ้นสุดกระบวนการ SHARE`,
       });
+      await this.chatService.disableChat({
+        chatUid: receiver._chat_uid,
+        itemId,
+      });
       return await this.itemService.changeItemStatus({
         itemId,
         status: itemStatus.delivered,
@@ -199,6 +203,10 @@ export class RequestService {
         action: `${giver.info.firstName} ได้ปฏิเสธที่จะส่งต่อของให้ ${receiver.info.firstName}`,
       });
       request.status = requestStatus.rejected;
+      await this.chatService.disableChat({
+        chatUid: giver._chat_uid,
+        itemId,
+      });
       await request.save();
       return item;
 

@@ -18,6 +18,25 @@ export class ChatService {
     return await newChatRoom.save();
   }
 
+  async disableChat(queryData: {
+    chatUid: Types.ObjectId[] | string[];
+    itemId: Types.ObjectId | string;
+  }): Promise<void> {
+    try {
+      const { chatUid, itemId } = queryData;
+
+      const chat = await this.chatModel.findOne({
+        _id: { $in: chatUid },
+        for: itemId,
+      });
+      if (chat === null) throw new Error('no this chat id');
+      chat.active = false;
+      await chat.save();
+    } catch (err) {
+      return err.message;
+    }
+  }
+
   async findAll(): Promise<Chat[]> {
     return await this.chatModel.find();
   }
@@ -32,8 +51,13 @@ export class ChatService {
     chatUid: Types.ObjectId;
     payload: ChatMessage;
   }): Promise<Chat> {
-    const chatData = await this.chatModel.findById(queryData.chatUid);
-    chatData.data = [...chatData.data, queryData.payload];
-    return await chatData.save();
+    try {
+      const chat = await this.chatModel.findById(queryData.chatUid);
+      if (chat === null) throw new Error('no this chat id');
+      chat.data = [...chat.data, queryData.payload];
+      return await chat.save();
+    } catch (err) {
+      return err;
+    }
   }
 }

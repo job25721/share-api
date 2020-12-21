@@ -1,4 +1,4 @@
-import { Args, Resolver, Query } from '@nestjs/graphql';
+import { Args, Resolver, Query, ObjectType, Field } from '@nestjs/graphql';
 import { Types } from 'mongoose';
 import { ChatService } from './chat.service';
 import { Chat } from './dto/chat.model';
