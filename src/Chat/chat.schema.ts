@@ -4,10 +4,6 @@ import { ChatMessage } from './dto/chat.model';
 
 @Schema()
 class Chat {
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  from: Types.ObjectId;
-  @Prop({ type: Types.ObjectId, ref: 'User' })
-  to: Types.ObjectId;
   @Prop()
   data: ChatMessage[];
   @Prop({ type: Types.ObjectId, ref: 'Ietm' })

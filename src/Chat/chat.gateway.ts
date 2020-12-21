@@ -9,6 +9,7 @@ import {
 } from '@nestjs/websockets';
 
 import { Socket, Server } from 'socket.io';
+import { ChatService } from './chat.service';
 
 interface msgPayload {
   from: string;
@@ -17,9 +18,10 @@ interface msgPayload {
 }
 
 @WebSocketGateway()
-export class AppGateway
+export class ChatGateway
   implements OnGatewayInit, OnGatewayConnection, OnGatewayDisconnect {
-  private logger: Logger = new Logger('AppGateway');
+  constructor(private readonly chatService: ChatService) {}
+  private logger: Logger = new Logger('ChatGateway');
 
   @WebSocketServer() wss: Server;
 
@@ -31,12 +33,11 @@ export class AppGateway
   }
 
   afterInit(server: Server) {
-    this.logger.log('Innit');
+    this.logger.log('Init');
   }
   @SubscribeMessage('toServer')
   handleMessage(client: Socket, payload: msgPayload): void {
     console.log(payload);
-    // return { event: 'toClient', data: payload };
     this.wss.emit('toClient', payload);
   }
 }

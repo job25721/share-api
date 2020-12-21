@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.comtroller';
-import { AppGateway } from './app.gateway';
+
 import { ChatModule } from './Chat/chat.module';
 import { ItemModule } from './Item/item.module';
 import { ItemLogModule } from './ItemLog/itemLog.module';
@@ -28,7 +28,7 @@ import { UserModule } from './User/user.module';
     RequestModule,
     ChatModule,
   ],
-  providers: [AppGateway],
+
   controllers: [AppController],
 })
 export class AppModule {}

@@ -9,6 +9,7 @@ import { UserService } from '../User/user.service';
 import { RequestActivityDto } from './dto/request.input';
 import { Request } from './dto/request.model';
 import { RequestDocument } from './request.schema';
+import { ChatService } from 'src/Chat/chat.service';
 
 @Injectable()
 export class RequestService {
@@ -17,6 +18,7 @@ export class RequestService {
     private readonly itemLogService: ItemLogService,
     private readonly itemService: ItemService,
     private readonly userService: UserService,
+    private readonly chatService: ChatService,
   ) {}
 
   async addRequest(data: {
@@ -61,6 +63,9 @@ export class RequestService {
           status: requestStatus.requested,
         };
         const newRequest = new this.requestModel(reqDto);
+        const newChat = await this.chatService.create(itemId);
+        // let chat_uid = newChat.id
+
         return await newRequest.save();
       } else {
         throw new Error(`you has exist request an item ${itemId}`);

@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ChatModule } from 'src/Chat/chat.module';
 import { ItemModule } from '../Item/item.module';
 import { ItemLogModule } from '../ItemLog/itemLog.module';
 import { UserModule } from '../User/user.module';
@@ -13,6 +14,7 @@ import { RequestService } from './request.service';
     ItemLogModule,
     UserModule,
     ItemModule,
+    ChatModule,
   ],
   providers: [RequestService, RequestResolver],
 })
