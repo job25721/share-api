@@ -75,6 +75,12 @@ export class RequestService {
           userId: reqDto.requestToPersonId,
         });
 
+        await this.itemLogService.addLog({
+          itemId,
+          actorId: requestPersonId,
+          action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกเพิ่มขึ้น`,
+        });
+
         return await newRequest.save();
       } else {
         throw new Error(`you has exist request an item ${itemId}`);
