@@ -9,4 +9,5 @@ export const requestStatus = {
   requested: 'requested',
   accepted: 'accepted',
   rejected: 'rejected',
+  delivered: 'delivered',
 };

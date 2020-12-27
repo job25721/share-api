@@ -1,4 +1,5 @@
 import { Field, InputType } from '@nestjs/graphql';
+import { Types } from 'mongoose';
 
 @InputType()
 export class RequestInput {
@@ -15,7 +16,7 @@ export class RequestInput {
 @InputType()
 export class RequestActivityDto {
   @Field(() => String)
-  reqId: string;
+  reqId: Types.ObjectId;
   @Field(() => String)
-  actionPersonId: string;
+  actionPersonId: Types.ObjectId;
 }

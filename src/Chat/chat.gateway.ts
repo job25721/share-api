@@ -33,7 +33,7 @@ export class ChatGateway
   @SubscribeMessage('toServer')
   async handleMessage(client: Socket, payload: ChatMessage): Promise<void> {
     try {
-      await this.chatService.saveChat({ chatUid: null, payload });
+      // await this.chatService.saveChat({ chatUid: null, payload });
       this.wss.emit('toClient', payload);
     } catch (error) {
       this.wss.emit('onError', error.message);

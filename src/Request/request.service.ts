@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { Item } from '../Item/dto/item.model';
@@ -18,6 +18,7 @@ export class RequestService {
     private readonly itemLogService: ItemLogService,
     private readonly itemService: ItemService,
     private readonly userService: UserService,
+    @Inject(forwardRef(() => ChatService))
     private readonly chatService: ChatService,
   ) {}
 
@@ -27,17 +28,23 @@ export class RequestService {
     reason: string;
     wantedRate: number;
   }): Promise<Request> {
-    const { requestPersonId, itemId, reason, wantedRate } = data;
+    const { reason, wantedRate } = data;
+    const itemId = Types.ObjectId(data.itemId);
+    const requestPersonId = Types.ObjectId(data.requestPersonId);
+
     try {
       //find exist request
       const existRequest = await this.requestModel.findOne({
-        itemId: Types.ObjectId(itemId),
-        requestPersonId: Types.ObjectId(requestPersonId),
+        itemId: itemId,
+        requestPersonId: requestPersonId,
       });
 
       console.log(existRequest);
 
-      if (existRequest === null) {
+      if (
+        existRequest === null ||
+        existRequest.status === requestStatus.rejected
+      ) {
         const item = await this.itemService.findById(itemId);
         if (item.ownerId == requestPersonId) {
           throw new Error("can't request your own item");
@@ -48,37 +55,27 @@ export class RequestService {
 
         const receiver = await this.userService.findById(requestPersonId);
 
+        const newChat = await this.chatService.create(itemId);
         await this.itemLogService.addLog({
           itemId,
           actorId: requestPersonId,
-          action: `${receiver.info.firstName} ทำการรีเควสของชิ้นนี้`,
+          action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกเพิ่มขึ้น`,
         });
         const reqDto: Request = {
-          itemId: Types.ObjectId(itemId),
-          requestPersonId: Types.ObjectId(requestPersonId),
+          itemId,
+          requestPersonId,
           requestToPersonId: item.ownerId,
           timestamp: new Date(Date.now()),
           reason,
           wantedRate,
           status: requestStatus.requested,
+          chat_uid: new Types.ObjectId(newChat.id),
         };
         const newRequest = new this.requestModel(reqDto);
-
-        const newChat = await this.chatService.create(itemId);
-
-        await this.userService.addChatRoom({
-          chatUid: newChat.id,
-          userId: reqDto.requestPersonId,
-        });
-        await this.userService.addChatRoom({
-          chatUid: newChat.id,
-          userId: reqDto.requestToPersonId,
-        });
-
         await this.itemLogService.addLog({
           itemId,
           actorId: requestPersonId,
-          action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกเพิ่มขึ้น`,
+          action: `${receiver.info.firstName} ทำการรีเควสของชิ้นนี้ reqid:${newRequest.id}`,
         });
 
         return await newRequest.save();
@@ -111,12 +108,15 @@ export class RequestService {
   }
 
   async acceptRequest(data: RequestActivityDto): Promise<Item> {
-    const { reqId, actionPersonId } = data;
+    const reqId = data.reqId;
+    const actionPersonId = data.actionPersonId;
+
     try {
       const req = await this.requestModel.findById(reqId);
-
-      const { ownerId, status } = await this.itemService.findById(req.itemId);
+      const { itemId, requestPersonId } = req;
+      const { ownerId, status } = await this.itemService.findById(itemId);
       if (ownerId === undefined) throw new Error('no this request id');
+
       if (ownerId != actionPersonId) {
         throw new Error('accept person is not item owner');
       }
@@ -129,14 +129,13 @@ export class RequestService {
       if (req.status !== requestStatus.requested) {
         throw new Error('this request already rejected or accepted');
       }
-      const { itemId, requestPersonId } = req;
 
       const giver = await this.userService.findById(actionPersonId);
       const receiver = await this.userService.findById(requestPersonId);
       req.status = requestStatus.accepted;
       await req.save();
       await this.itemLogService.addLog({
-        itemId: itemId.toString(),
+        itemId: itemId,
         actorId: actionPersonId,
         action: `${giver.info.firstName} ได้ยินยอมส่งต่อของให้ ${receiver.info.firstName}`,
       });
@@ -150,9 +149,13 @@ export class RequestService {
   }
 
   async acceptDelivered(data: RequestActivityDto): Promise<Item> {
-    const { reqId, actionPersonId } = data;
+    const reqId = data.reqId;
+    const actionPersonId = data.actionPersonId;
+
     try {
-      const req = await this.findById(reqId);
+      const req = await this.requestModel.findById(reqId);
+
+      const { itemId, requestPersonId, requestToPersonId, chat_uid } = req;
 
       if (actionPersonId != req.requestPersonId) {
         throw new Error("You're not a request person");
@@ -161,27 +164,24 @@ export class RequestService {
         throw new Error('this request is not accept by owner');
       }
 
-      const { itemId, requestPersonId, requestToPersonId } = req;
-
       const giver = await this.userService.findById(requestToPersonId);
       const receiver = await this.userService.findById(requestPersonId);
 
       await this.itemLogService.addLog({
-        itemId: itemId.toString(),
+        itemId: itemId,
         actorId: actionPersonId,
         action: `${receiver.info.firstName} ได้รับของจาก ${giver.info.firstName} แล้ว สิ้นสุดกระบวนการ SHARE`,
       });
-      await this.chatService.disableChat({
-        chatUid: receiver._chat_uid,
-        itemId,
-      });
+      await this.chatService.disableChat({ chatUid: chat_uid });
       await this.itemLogService.addLog({
-        itemId: itemId.toString(),
+        itemId: itemId,
         actorId: requestPersonId,
         action: `ห้องแชทสำหรับส่งต่อ ${
           (await this.itemService.findById(itemId.toString())).name
         } ได้ถุกปิด`,
       });
+      req.status = requestStatus.delivered;
+      await req.save();
       return await this.itemService.changeItemStatus({
         itemId,
         status: itemStatus.delivered,
@@ -192,7 +192,8 @@ export class RequestService {
   }
 
   async rejectRequest(data: RequestActivityDto): Promise<Item> {
-    const { reqId, actionPersonId } = data;
+    const reqId = data.reqId;
+    const actionPersonId = data.actionPersonId;
     try {
       const request = await this.requestModel.findById(reqId);
       const { itemId, requestPersonId } = request;
@@ -211,17 +212,14 @@ export class RequestService {
       const giver = await this.userService.findById(actionPersonId);
       const receiver = await this.userService.findById(requestPersonId);
       await this.itemLogService.addLog({
-        itemId: itemId.toString(),
+        itemId: itemId,
         actorId: actionPersonId,
         action: `${giver.info.firstName} ได้ปฏิเสธที่จะส่งต่อของให้ ${receiver.info.firstName}`,
       });
       request.status = requestStatus.rejected;
-      await this.chatService.disableChat({
-        chatUid: giver._chat_uid,
-        itemId,
-      });
+      await this.chatService.disableChat({ chatUid: request.chat_uid });
       await this.itemLogService.addLog({
-        itemId: itemId.toString(),
+        itemId: itemId,
         actorId: actionPersonId,
         action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกปิด`,
       });

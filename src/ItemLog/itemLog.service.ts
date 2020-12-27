@@ -30,21 +30,21 @@ export class ItemLogService {
   }
 
   async addLog(data: {
-    itemId: string;
-    actorId: string;
+    itemId: Types.ObjectId;
+    actorId: Types.ObjectId;
     action: string;
   }): Promise<ItemLog> {
     const { itemId, actorId, action } = data;
     try {
       const existLog = await this.itemLogModel.findOne({
-        itemId: Types.ObjectId(itemId),
+        itemId,
       });
 
       if (existLog === null) {
         throw new Error('no such item');
       }
 
-      const newLog = createItemLog(Types.ObjectId(actorId), action);
+      const newLog = createItemLog(actorId, action);
       newLog.prevHash = existLog.logs[existLog.logs.length - 1].hash;
       existLog.logs.push(newLog);
       return await existLog.save();

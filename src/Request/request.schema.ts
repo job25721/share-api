@@ -17,6 +17,8 @@ class Request {
   wantedRate: number;
   @Prop()
   status: string;
+  @Prop({ type: Types.ObjectId, ref: 'Chat' })
+  chat_uid: Types.ObjectId;
 }
 
 export type RequestDocument = Request & Document;

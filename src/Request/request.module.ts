@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ChatModule } from 'src/Chat/chat.module';
 import { ItemModule } from '../Item/item.module';
@@ -14,8 +14,9 @@ import { RequestService } from './request.service';
     ItemLogModule,
     UserModule,
     ItemModule,
-    ChatModule,
+    forwardRef(() => ChatModule),
   ],
   providers: [RequestService, RequestResolver],
+  exports: [RequestService],
 })
 export class RequestModule {}

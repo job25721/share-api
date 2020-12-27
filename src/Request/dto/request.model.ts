@@ -19,4 +19,6 @@ export class Request {
   wantedRate: number;
   @Field(() => String)
   status: string;
+  @Field(() => String)
+  chat_uid: Types.ObjectId;
 }

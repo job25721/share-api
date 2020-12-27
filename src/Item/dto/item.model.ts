@@ -14,7 +14,7 @@ export class Item {
   @Field(() => [String])
   tag: string[];
   @Field(() => String)
-  ownerId: Types.ObjectId | string;
+  ownerId: Types.ObjectId;
   @Field(() => String)
   status: string;
   @Field(() => Date)

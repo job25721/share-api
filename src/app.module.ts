@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { forwardRef, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -25,8 +25,8 @@ import { UserModule } from './User/user.module';
     ItemModule,
     ItemLogModule,
     UserModule,
-    RequestModule,
     ChatModule,
+    RequestModule,
   ],
 
   controllers: [AppController],
