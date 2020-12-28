@@ -1,11 +1,14 @@
+import { UseGuards } from '@nestjs/common';
 import {
   Args,
+  Context,
   Mutation,
   Parent,
   Query,
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { AuthGuard } from 'src/User/auth.guard';
 import { Item } from '../Item/dto/item.model';
 import { ItemService } from '../Item/item.service';
 import { User } from '../User/dto/user.model';
@@ -59,14 +62,16 @@ export class RequestResolver {
     return this.requestService.findById(reqId);
   }
 
+  @UseGuards(new AuthGuard())
   @Query(() => [Request])
-  getMyRequests(@Args('myId') id: string): Promise<Request[]> {
-    return this.requestService.findMyRequests(id);
+  getMyRequests(@Context('user') user): Promise<Request[]> {
+    return this.requestService.findMyRequests(user.id);
   }
 
+  @UseGuards(new AuthGuard())
   @Query(() => [Request])
-  getMySendRequests(@Args('myId') id: string): Promise<Request[]> {
-    return this.requestService.findMySendRequests(id);
+  getMySendRequests(@Context('user') user): Promise<Request[]> {
+    return this.requestService.findMySendRequests(user.id);
   }
 
   @ResolveField(() => Item)

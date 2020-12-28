@@ -1,7 +1,17 @@
-import { Args, Resolver, Query, ResolveField, Parent } from '@nestjs/graphql';
+import { UseGuards } from '@nestjs/common';
+import {
+  Args,
+  Resolver,
+  Query,
+  ResolveField,
+  Parent,
+  Context,
+} from '@nestjs/graphql';
 import { Item } from 'src/Item/dto/item.model';
 import { ItemService } from 'src/Item/item.service';
 import { RequestService } from 'src/Request/request.service';
+import { AuthGuard } from 'src/User/auth.guard';
+import { User } from 'src/User/dto/user.model';
 import { ChatService } from './chat.service';
 import { Chat } from './dto/chat.model';
 
@@ -13,10 +23,13 @@ export class ChatResolver {
     private readonly requestService: RequestService,
   ) {}
 
+  @UseGuards(new AuthGuard())
   @Query(() => [Chat])
-  async getMyChat(@Args('userId') userId: string): Promise<Chat[]> {
-    const myReq = await this.requestService.findMyRequests(userId);
-    const mySendReq = await this.requestService.findMySendRequests(userId);
+  async getMyChat(@Context('user') user): Promise<Chat[]> {
+    console.log(user);
+
+    const myReq = await this.requestService.findMyRequests(user.id);
+    const mySendReq = await this.requestService.findMySendRequests(user.id);
 
     const myChat = [
       ...myReq.map(({ chat_uid }) => chat_uid),
