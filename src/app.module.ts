@@ -10,6 +10,7 @@ import { ItemLogModule } from './ItemLog/itemLog.module';
 import { RequestModule } from './Request/request.module';
 import { UserModule } from './User/user.module';
 import { BookmarkModule } from './Bookmark/bookmark.module';
+import { TagModule } from './Tag/tag.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -29,6 +30,7 @@ import { BookmarkModule } from './Bookmark/bookmark.module';
     ChatModule,
     RequestModule,
     BookmarkModule,
+    TagModule,
   ],
 
   controllers: [AppController],

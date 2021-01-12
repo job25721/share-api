@@ -6,12 +6,14 @@ import { ChangeStatus, ItemInput } from './dto/item.input';
 import { Item } from './dto/item.model';
 import { ItemDocument } from './item.schema';
 import { itemStatus } from '../status';
+import { TagService } from '../Tag/tag.service';
 
 @Injectable()
 export class ItemService {
   constructor(
     @InjectModel('Item') private itemModel: Model<ItemDocument>,
     private readonly itemLogService: ItemLogService,
+    private readonly tagService: TagService,
   ) {}
 
   async findAll(): Promise<Item[]> {
@@ -44,20 +46,31 @@ export class ItemService {
     return res;
   }
 
-  async create(createItemDto: ItemInput): Promise<Item> {
+  async create(createItemDto: ItemInput, userId: string): Promise<Item> {
     const now = new Date(Date.now());
-    const userId = '5fce73e4f9a69cb3f7db04ac';
     const newItem = new this.itemModel(createItemDto);
     newItem.createdDate = now;
     newItem.status = itemStatus.available;
     newItem.ownerId = Types.ObjectId(userId);
-    //addLog
-    const itemLog = await this.itemLogService.InitLog({
-      itemId: newItem.id,
-      actorId: userId,
-    });
-    newItem.logId = new Types.ObjectId(itemLog.id);
-    return await newItem.save();
+    try {
+      //addLog
+      const itemLog = await this.itemLogService.InitLog({
+        itemId: newItem.id,
+        actorId: userId,
+      });
+      newItem.logId = new Types.ObjectId(itemLog.id);
+      if (newItem.tags.length > 0) {
+        for (const tag of newItem.tags) {
+          await this.tagService.addTagFreq({
+            tagName: tag,
+            addedPerson: newItem.ownerId,
+          });
+        }
+      }
+      return newItem.save();
+    } catch (err) {
+      return err;
+    }
   }
 
   async changeItemStatus(data: ChangeStatus): Promise<Item> {

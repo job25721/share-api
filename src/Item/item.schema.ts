@@ -10,7 +10,7 @@ class Item {
   @Prop()
   category: string;
   @Prop()
-  tag: string[];
+  tags: string[];
   @Prop({ type: Types.ObjectId, ref: 'User' })
   ownerId: Types.ObjectId;
   @Prop()

@@ -12,7 +12,7 @@ export class Item {
   @Field(() => String)
   category: string;
   @Field(() => [String])
-  tag: string[];
+  tags: string[];
   @Field(() => String)
   ownerId: Types.ObjectId;
   @Field(() => String)

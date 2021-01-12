@@ -18,5 +18,5 @@ export class ItemInput {
   @Field(() => String)
   category: string;
   @Field(() => [String], { nullable: true })
-  tag: string[];
+  tags: string[];
 }

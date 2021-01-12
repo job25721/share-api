@@ -5,6 +5,7 @@ import {
   Args,
   ResolveField,
   Parent,
+  Context,
 } from '@nestjs/graphql';
 import { ItemLog } from '../ItemLog/dto/itemLog.model';
 
@@ -15,6 +16,8 @@ import { UserService } from '../User/user.service';
 import { ItemInput, ChangeStatus } from './dto/item.input';
 import { Item } from './dto/item.model';
 import { ItemService } from './item.service';
+import { UseGuards } from '@nestjs/common';
+import { AuthGuard } from '../User/auth.guard';
 
 @Resolver(() => Item)
 export class ItemResolver {
@@ -44,9 +47,13 @@ export class ItemResolver {
     return await this.itemService.changeItemStatus(data);
   }
 
+  @UseGuards(new AuthGuard())
   @Mutation(() => Item)
-  async addNewItem(@Args('item') newItem: ItemInput): Promise<Item> {
-    return await this.itemService.create(newItem);
+  async addNewItem(
+    @Args('item') newItem: ItemInput,
+    @Context('user') user,
+  ): Promise<Item> {
+    return this.itemService.create(newItem, user.id);
   }
 
   @ResolveField(() => User)
