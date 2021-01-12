@@ -9,6 +9,7 @@ import { ItemModule } from './Item/item.module';
 import { ItemLogModule } from './ItemLog/itemLog.module';
 import { RequestModule } from './Request/request.module';
 import { UserModule } from './User/user.module';
+import { BookmarkModule } from './Bookmark/bookmark.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -27,6 +28,7 @@ import { UserModule } from './User/user.module';
     UserModule,
     ChatModule,
     RequestModule,
+    BookmarkModule,
   ],
 
   controllers: [AppController],

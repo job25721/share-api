@@ -70,4 +70,15 @@ export class ItemService {
       return error;
     }
   }
+
+  async aggregateItems(itemId: Types.ObjectId[]): Promise<Item[]> {
+    try {
+      const res = await this.itemModel.find({
+        _id: { $in: itemId },
+      });
+      return res;
+    } catch (err) {
+      return err;
+    }
+  }
 }
