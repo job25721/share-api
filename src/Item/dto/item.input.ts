@@ -1,8 +1,8 @@
-import { Field, InputType } from '@nestjs/graphql';
+import { Field, InputType, ObjectType } from '@nestjs/graphql';
 import { Types } from 'mongoose';
 
 @InputType()
-export class changeStatus {
+export class ChangeStatus {
   @Field(() => String)
   itemId: string | Types.ObjectId;
   @Field(() => String)

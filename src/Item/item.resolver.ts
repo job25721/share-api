@@ -12,7 +12,7 @@ import { ItemLogService } from '../ItemLog/itemLog.service';
 
 import { User } from '../User/dto/user.model';
 import { UserService } from '../User/user.service';
-import { ItemInput, changeStatus } from './dto/item.input';
+import { ItemInput, ChangeStatus } from './dto/item.input';
 import { Item } from './dto/item.model';
 import { ItemService } from './item.service';
 
@@ -40,7 +40,7 @@ export class ItemResolver {
   }
 
   @Mutation(() => Item)
-  async updateItemStatus(@Args('data') data: changeStatus): Promise<Item> {
+  async updateItemStatus(@Args('data') data: ChangeStatus): Promise<Item> {
     return await this.itemService.changeItemStatus(data);
   }
 

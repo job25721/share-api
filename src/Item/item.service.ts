@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { ItemLogService } from '../ItemLog/itemLog.service';
-import { changeStatus, ItemInput } from './dto/item.input';
+import { ChangeStatus, ItemInput } from './dto/item.input';
 import { Item } from './dto/item.model';
 import { ItemDocument } from './item.schema';
 import { itemStatus } from '../status';
@@ -15,7 +15,7 @@ export class ItemService {
   ) {}
 
   async findAll(): Promise<Item[]> {
-    return await this.itemModel.find();
+    return this.itemModel.find();
   }
 
   async findById(id: Types.ObjectId | string): Promise<Item> {
@@ -29,15 +29,19 @@ export class ItemService {
   }
 
   async findMyAllItem(ownerId: string): Promise<Item[]> {
-    return await this.itemModel.find({ ownerId: Types.ObjectId(ownerId) });
+    const res = await this.itemModel.find({
+      ownerId: Types.ObjectId(ownerId),
+    });
+    return res;
   }
 
   async findMyItem(data: { ownerId: string; itemId: string }): Promise<Item> {
     const { ownerId, itemId } = data;
-    return await this.itemModel.findOne({
+    const res = this.itemModel.findOne({
       ownerId: Types.ObjectId(ownerId),
       _id: Types.ObjectId(itemId),
     });
+    return res;
   }
 
   async create(createItemDto: ItemInput): Promise<Item> {
@@ -56,7 +60,7 @@ export class ItemService {
     return await newItem.save();
   }
 
-  async changeItemStatus(data: changeStatus): Promise<Item> {
+  async changeItemStatus(data: ChangeStatus): Promise<Item> {
     const { itemId, status } = data;
     try {
       const res = await this.itemModel.findById(itemId);
