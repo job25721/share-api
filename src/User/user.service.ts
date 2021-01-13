@@ -15,10 +15,16 @@ export class UserService {
   constructor(@InjectModel('User') private userModel: Model<UserDocument>) {}
 
   async create(createUserDto: NewUser): Promise<User> {
-    const hashPassword = await hash(createUserDto.password, this.saltRounds);
-    createUserDto.password = hashPassword;
-    const newUser = new this.userModel(createUserDto);
-    return newUser.save();
+    try {
+      createUserDto.password = await hash(
+        createUserDto.password,
+        this.saltRounds,
+      );
+      const newUser = new this.userModel(createUserDto);
+      return await newUser.save();
+    } catch (err) {
+      return err;
+    }
   }
 
   async login(auth: AuthInput): Promise<string> {
@@ -43,6 +49,6 @@ export class UserService {
   }
 
   async findById(id: Types.ObjectId | string): Promise<User> {
-    return await this.userModel.findById(id);
+    return this.userModel.findById(id);
   }
 }

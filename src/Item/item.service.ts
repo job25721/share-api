@@ -23,7 +23,9 @@ export class ItemService {
   async findById(id: Types.ObjectId | string): Promise<Item> {
     try {
       const res = await this.itemModel.findById(id);
-      if (res === null) throw new Error("item you're looking not found");
+      if (res === null) {
+        throw new Error("item you're looking not found");
+      }
       return res;
     } catch (err) {
       return err;
@@ -31,19 +33,17 @@ export class ItemService {
   }
 
   async findMyAllItem(ownerId: string): Promise<Item[]> {
-    const res = await this.itemModel.find({
+    return this.itemModel.find({
       ownerId: Types.ObjectId(ownerId),
     });
-    return res;
   }
 
   async findMyItem(data: { ownerId: string; itemId: string }): Promise<Item> {
     const { ownerId, itemId } = data;
-    const res = this.itemModel.findOne({
+    return this.itemModel.findOne({
       ownerId: Types.ObjectId(ownerId),
       _id: Types.ObjectId(itemId),
     });
-    return res;
   }
 
   async create(createItemDto: ItemInput, userId: string): Promise<Item> {
@@ -86,10 +86,9 @@ export class ItemService {
 
   async aggregateItems(itemId: Types.ObjectId[]): Promise<Item[]> {
     try {
-      const res = await this.itemModel.find({
+      return await this.itemModel.find({
         _id: { $in: itemId },
       });
-      return res;
     } catch (err) {
       return err;
     }

@@ -98,7 +98,7 @@ export class RequestService {
   }
 
   async findMyRequests(myId: string): Promise<Request[]> {
-    return await this.requestModel.find({
+    return this.requestModel.find({
       requestToPersonId: Types.ObjectId(myId),
     });
   }

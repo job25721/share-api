@@ -31,12 +31,8 @@ export class ChatService {
     }
   }
 
-  async findAll(): Promise<Chat[]> {
-    return await this.chatModel.find();
-  }
-
   async findChat(chatUid: Types.ObjectId[]): Promise<Chat[]> {
-    return await this.chatModel.find({
+    return this.chatModel.find({
       _id: { $in: chatUid },
     });
   }
