@@ -42,4 +42,8 @@ export class TagService {
       return err;
     }
   }
+
+  async getMostUsedTag() {
+    return this.tagModel.find().sort({ usedFreq: -1 }).limit(10);
+  }
 }
