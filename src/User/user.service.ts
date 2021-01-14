@@ -48,6 +48,10 @@ export class UserService {
     }
   }
 
+  async getMyInfo(id: string): Promise<User> {
+    return this.findById(id);
+  }
+
   async findById(id: Types.ObjectId | string): Promise<User> {
     return this.userModel.findById(id);
   }
