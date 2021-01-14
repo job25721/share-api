@@ -71,6 +71,7 @@ export class BookmarkService {
     const bookmark = await this.bookmarkModel.findOne({
       userId,
     });
+    if (bookmark === null) return [];
     return this.itemService.aggregateItems(bookmark.items);
   }
 }

@@ -22,4 +22,9 @@ class Item {
 }
 
 export type ItemDocument = Item & Document;
-export const ItemSchema = SchemaFactory.createForClass(Item);
+export const ItemSchema = SchemaFactory.createForClass(Item).index({
+  name: 'text',
+  description: 'text',
+  category: 'text',
+  tags: 'text',
+});

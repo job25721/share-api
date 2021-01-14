@@ -86,11 +86,17 @@ export class ItemService {
 
   async aggregateItems(itemId: Types.ObjectId[]): Promise<Item[]> {
     try {
-      return await this.itemModel.find({
+      return this.itemModel.find({
         _id: { $in: itemId },
       });
     } catch (err) {
       return err;
     }
+  }
+
+  async searchItem(searchKey: string): Promise<Item[]> {
+    return this.itemModel.find({
+      $text: { $search: searchKey },
+    });
   }
 }

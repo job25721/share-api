@@ -11,6 +11,7 @@ import { RequestModule } from './Request/request.module';
 import { UserModule } from './User/user.module';
 import { BookmarkModule } from './Bookmark/bookmark.module';
 import { TagModule } from './Tag/tag.module';
+import { SearchModule } from './Search/search.module';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -23,6 +24,7 @@ import { TagModule } from './Tag/tag.module';
     }),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.h3ocx.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`,
+      { useCreateIndex: true },
     ),
     ItemModule,
     ItemLogModule,
@@ -31,6 +33,7 @@ import { TagModule } from './Tag/tag.module';
     RequestModule,
     BookmarkModule,
     TagModule,
+    SearchModule,
   ],
 
   controllers: [AppController],
