@@ -14,6 +14,6 @@ COPY yarn.lock .
 COPY .env .
 COPY start.sh .
 COPY --from=build /app/dist ./dist
-RUN chmod +x ./install.sh
+RUN chmod +x ./start.sh
 CMD [ "./start.sh"]
 
