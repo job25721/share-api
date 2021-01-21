@@ -30,7 +30,7 @@ export class UserService {
   async login(auth: AuthInput): Promise<string> {
     try {
       const user = await this.userModel.findOne({ username: auth.username });
-      if (user && user.password === auth.password) {
+      if (user && (await compare(auth.password, user.password))) {
         const jwtPayload = {
           id: user.id,
           username: user.username,

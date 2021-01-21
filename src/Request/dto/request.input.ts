@@ -6,8 +6,6 @@ export class RequestInput {
   @Field(() => String)
   itemId: string;
   @Field(() => String)
-  requestPersonId: string;
-  @Field(() => String)
   reason: string;
   @Field(() => Number)
   wantedRate: number;
@@ -17,6 +15,4 @@ export class RequestInput {
 export class RequestActivityDto {
   @Field(() => String)
   reqId: Types.ObjectId;
-  @Field(() => String)
-  actionPersonId: Types.ObjectId;
 }

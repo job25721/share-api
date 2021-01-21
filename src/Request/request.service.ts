@@ -46,7 +46,11 @@ export class RequestService {
         existRequest.status === requestStatus.rejected
       ) {
         const item = await this.itemService.findById(itemId);
-        if (item.ownerId == requestPersonId) {
+
+        if (
+          item.ownerId.toHexString().toString() ===
+          requestPersonId.toHexString().toString()
+        ) {
           throw new Error("can't request your own item");
         }
         if (item.status !== itemStatus.available) {
@@ -109,9 +113,9 @@ export class RequestService {
     });
   }
 
-  async acceptRequest(data: RequestActivityDto): Promise<Item> {
+  async acceptRequest(data: RequestActivityDto, actorId): Promise<Item> {
     const reqId = data.reqId;
-    const actionPersonId = data.actionPersonId;
+    const actionPersonId = actorId;
 
     try {
       const req = await this.requestModel.findById(reqId);
@@ -119,7 +123,7 @@ export class RequestService {
       const { ownerId, status } = await this.itemService.findById(itemId);
       if (ownerId === undefined) throw new Error('no this request id');
 
-      if (ownerId != actionPersonId) {
+      if (ownerId.toHexString().toString() !== actionPersonId.toString()) {
         throw new Error('accept person is not item owner');
       }
       if (status !== itemStatus.available) {
@@ -150,16 +154,19 @@ export class RequestService {
     }
   }
 
-  async acceptDelivered(data: RequestActivityDto): Promise<Item> {
+  async acceptDelivered(data: RequestActivityDto, actorId): Promise<Item> {
     const reqId = data.reqId;
-    const actionPersonId = data.actionPersonId;
+    const actionPersonId = actorId;
 
     try {
       const req = await this.requestModel.findById(reqId);
 
       const { itemId, requestPersonId, requestToPersonId, chat_uid } = req;
 
-      if (actionPersonId != req.requestPersonId) {
+      if (
+        actionPersonId.toString() !==
+        req.requestPersonId.toHexString().toString()
+      ) {
         throw new Error("You're not a request person");
       }
       if (req.status !== requestStatus.accepted) {
@@ -193,9 +200,9 @@ export class RequestService {
     }
   }
 
-  async rejectRequest(data: RequestActivityDto): Promise<Item> {
+  async rejectRequest(data: RequestActivityDto, actorId): Promise<Item> {
     const reqId = data.reqId;
-    const actionPersonId = data.actionPersonId;
+    const actionPersonId = actorId;
     try {
       const request = await this.requestModel.findById(reqId);
       const { itemId, requestPersonId } = request;
@@ -207,7 +214,7 @@ export class RequestService {
         throw new Error('this item already rejected');
 
       if (ownerId === undefined) throw new Error('no this request id');
-      if (ownerId != actionPersonId) {
+      if (ownerId.toHexString().toString() !== actionPersonId.toString()) {
         throw new Error('actor person is not item owner');
       }
 

@@ -25,36 +25,46 @@ export class RequestResolver {
     private readonly itemService: ItemService,
   ) {}
 
+  @UseGuards(new AuthGuard())
   @Mutation(() => Request)
   async createRequest(
     @Args('reqData')
-    { itemId, requestPersonId, reason, wantedRate }: RequestInput,
+    { itemId, reason, wantedRate }: RequestInput,
+    @Context('user') user,
   ): Promise<Request> {
     return await this.requestService.addRequest({
       itemId,
-      requestPersonId,
+      requestPersonId: user.id,
       reason,
       wantedRate,
     });
   }
 
+  @UseGuards(new AuthGuard())
   @Mutation(() => Item)
-  async acceptDelivered(@Args('reqData') data: RequestActivityDto) {
-    return await this.requestService.acceptDelivered(data);
+  async acceptDelivered(
+    @Args('reqData') data: RequestActivityDto,
+    @Context('user') user,
+  ) {
+    return await this.requestService.acceptDelivered(data, user.id);
   }
 
+  @UseGuards(new AuthGuard())
   @Mutation(() => Item)
   async acceptRequest(
     @Args('reqData') data: RequestActivityDto,
+    @Context('user') user,
   ): Promise<Item> {
-    return await this.requestService.acceptRequest(data);
+    return await this.requestService.acceptRequest(data, user.id);
   }
 
+  @UseGuards(new AuthGuard())
   @Mutation(() => Item)
   async rejectRequest(
     @Args('reqData') data: RequestActivityDto,
+    @Context('user') user,
   ): Promise<Item> {
-    return await this.requestService.rejectRequest(data);
+    return await this.requestService.rejectRequest(data, user.id);
   }
 
   @Query(() => Request)

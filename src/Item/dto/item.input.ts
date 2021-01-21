@@ -17,6 +17,8 @@ export class ItemInput {
   description: string;
   @Field(() => String)
   category: string;
+  @Field(() => [String])
+  images: string[];
   @Field(() => [String], { nullable: true })
   tags: string[];
 }

@@ -14,6 +14,8 @@ class Item {
   @Prop({ type: Types.ObjectId, ref: 'User' })
   ownerId: Types.ObjectId;
   @Prop()
+  images: string[];
+  @Prop()
   status: string;
   @Prop()
   createdDate: Date;

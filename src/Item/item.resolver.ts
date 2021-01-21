@@ -37,11 +37,13 @@ export class ItemResolver {
     return await this.itemService.findById(id);
   }
 
+  @UseGuards(new AuthGuard())
   @Query(() => [Item])
-  async getMyItem(@Args('ownerId') id: string): Promise<Item[]> {
-    return await this.itemService.findMyAllItem(id);
+  async getMyItem(@Context('user') user): Promise<Item[]> {
+    return await this.itemService.findMyAllItem(user.id);
   }
 
+  @UseGuards(new AuthGuard())
   @Mutation(() => Item)
   async updateItemStatus(@Args('data') data: ChangeStatus): Promise<Item> {
     return await this.itemService.changeItemStatus(data);
