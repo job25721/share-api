@@ -1,2 +1,2 @@
-yarn install
+yarn
 node dist/main

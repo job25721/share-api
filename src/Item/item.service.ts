@@ -17,7 +17,7 @@ export class ItemService {
   ) {}
 
   async findAll(): Promise<Item[]> {
-    return this.itemModel.find();
+    return this.itemModel.find().sort({ createdDate: -1 });
   }
 
   async findById(id: Types.ObjectId | string): Promise<Item> {
@@ -33,9 +33,11 @@ export class ItemService {
   }
 
   async findMyAllItem(ownerId: string): Promise<Item[]> {
-    return this.itemModel.find({
-      ownerId: Types.ObjectId(ownerId),
-    });
+    return this.itemModel
+      .find({
+        ownerId: Types.ObjectId(ownerId),
+      })
+      .sort({ createdDate: -1 });
   }
 
   async findMyItem(data: { ownerId: string; itemId: string }): Promise<Item> {
