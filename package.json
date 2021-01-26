@@ -21,6 +21,7 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@apollo/client": "^3.3.7",
     "@nestjs/common": "^7.5.1",
     "@nestjs/config": "^0.6.1",
     "@nestjs/core": "^7.5.1",
@@ -33,6 +34,7 @@
     "@types/crypto-js": "^4.0.1",
     "@types/jsonwebtoken": "^8.5.0",
     "@types/mongoose": "^5.10.1",
+    "apollo-boost": "^0.4.9",
     "apollo-server-express": "^2.19.0",
     "bcrypt": "^5.0.0",
     "crypto-js": "^4.0.0",
@@ -45,7 +47,8 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^6.6.3",
-    "socket.io": "^3.0.4"
+    "socket.io": "^3.0.4",
+    "subscriptions-transport-ws": "^0.9.18"
   },
   "devDependencies": {
     "@nestjs/cli": "^7.5.1",

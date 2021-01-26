@@ -38,9 +38,4 @@ export class ChatResolver {
 
     return await this.chatService.findChat(myChat);
   }
-
-  @ResolveField(() => Item)
-  async getItemChat(@Parent() { for: itemId }: Chat): Promise<Item> {
-    return await this.itemService.findById(itemId);
-  }
 }

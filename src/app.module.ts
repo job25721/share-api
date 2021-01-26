@@ -1,4 +1,4 @@
-import { forwardRef, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { GraphQLModule } from '@nestjs/graphql';
 import { MongooseModule } from '@nestjs/mongoose';
@@ -20,7 +20,13 @@ import { SearchModule } from './Search/search.module';
       autoSchemaFile: 'schema.gql',
       debug: false,
       playground: true,
-      context: ({ req }) => ({ headers: req.headers }),
+      context: async ({ req, connection }) => {
+        if (connection) {
+          return connection.context;
+        } else {
+          return { headers: req.headers };
+        }
+      },
     }),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.h3ocx.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`,

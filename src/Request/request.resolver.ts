@@ -8,6 +8,8 @@ import {
   ResolveField,
   Resolver,
 } from '@nestjs/graphql';
+import { ChatService } from 'src/Chat/chat.service';
+import { Chat } from 'src/Chat/dto/chat.model';
 import { AuthGuard } from 'src/User/auth.guard';
 import { Item } from '../Item/dto/item.model';
 import { ItemService } from '../Item/item.service';
@@ -23,6 +25,7 @@ export class RequestResolver {
     private readonly requestService: RequestService,
     private readonly userService: UserService,
     private readonly itemService: ItemService,
+    private readonly chatService: ChatService,
   ) {}
 
   @UseGuards(new AuthGuard())
@@ -82,6 +85,17 @@ export class RequestResolver {
   @Query(() => [Request])
   getMySendRequests(@Context('user') user): Promise<Request[]> {
     return this.requestService.findMySendRequests(user.id);
+  }
+
+  @UseGuards(new AuthGuard())
+  @Query(() => [Request])
+  getMySuccessRequests(@Context('user') user): Promise<Request[]> {
+    return this.requestService.findMySuccessRequests(user.id);
+  }
+
+  @ResolveField(() => Chat)
+  chat(@Parent() { chat_uid }: Request): Promise<Chat> {
+    return this.chatService.findById(chat_uid);
   }
 
   @ResolveField(() => Item)

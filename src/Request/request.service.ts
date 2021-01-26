@@ -58,13 +58,7 @@ export class RequestService {
         }
 
         const receiver = await this.userService.findById(requestPersonId);
-
-        const newChat = await this.chatService.create(itemId);
-        await this.itemLogService.addLog({
-          itemId,
-          actorId: requestPersonId,
-          action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกเพิ่มขึ้น`,
-        });
+        const newChat = await this.chatService.create();
         const reqDto: Request = {
           itemId,
           requestPersonId,
@@ -75,11 +69,18 @@ export class RequestService {
           status: requestStatus.requested,
           chat_uid: new Types.ObjectId(newChat.id),
         };
+
         const newRequest = new this.requestModel(reqDto);
         await this.itemLogService.addLog({
           itemId,
           actorId: requestPersonId,
           action: `${receiver.info.firstName} ทำการรีเควสของชิ้นนี้ reqid:${newRequest.id}`,
+        });
+
+        await this.itemLogService.addLog({
+          itemId,
+          actorId: requestPersonId,
+          action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกเพิ่มขึ้น`,
         });
 
         return await newRequest.save();
@@ -111,6 +112,12 @@ export class RequestService {
     return this.requestModel.find({
       requestPersonId: Types.ObjectId(requestPersonId),
     });
+  }
+
+  async findMySuccessRequests(userId): Promise<Request[]> {
+    return (await this.findMySendRequests(userId)).filter(
+      (request) => request.status === requestStatus.delivered,
+    );
   }
 
   async acceptRequest(data: RequestActivityDto, actorId): Promise<Item> {

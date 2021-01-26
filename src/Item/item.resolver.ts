@@ -6,6 +6,7 @@ import {
   ResolveField,
   Parent,
   Context,
+  Subscription,
 } from '@nestjs/graphql';
 import { ItemLog } from '../ItemLog/dto/itemLog.model';
 
@@ -18,18 +19,28 @@ import { Item } from './dto/item.model';
 import { ItemService } from './item.service';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../User/auth.guard';
+import { PubSub } from 'apollo-server-express';
 
 @Resolver(() => Item)
 export class ItemResolver {
+  private pubSub: PubSub;
+
   constructor(
     private readonly itemService: ItemService,
     private readonly userService: UserService,
     private readonly itemLogService: ItemLogService,
-  ) {}
+  ) {
+    this.pubSub = new PubSub();
+  }
 
   @Query(() => [Item])
   async getAllItem(): Promise<Item[]> {
     return await this.itemService.findAll();
+  }
+
+  @Query(() => [Item])
+  async getFeedItems(): Promise<Item[]> {
+    return this.itemService.getFeedItems();
   }
 
   @Query(() => Item)
@@ -55,7 +66,14 @@ export class ItemResolver {
     @Args('item') newItem: ItemInput,
     @Context('user') user,
   ): Promise<Item> {
-    return this.itemService.create(newItem, user.id);
+    const createdItem = await this.itemService.create(newItem, user.id);
+    this.pubSub.publish('itemAdded', { itemAdded: createdItem });
+    return createdItem;
+  }
+
+  @Subscription(() => Item)
+  itemAdded() {
+    return this.pubSub.asyncIterator('itemAdded');
   }
 
   @ResolveField(() => User)

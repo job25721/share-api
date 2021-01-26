@@ -20,6 +20,12 @@ export class ItemService {
     return this.itemModel.find().sort({ createdDate: -1 });
   }
 
+  async getFeedItems(): Promise<Item[]> {
+    return this.itemModel
+      .find({ status: itemStatus.available })
+      .sort({ createdDate: -1 });
+  }
+
   async findById(id: Types.ObjectId | string): Promise<Item> {
     try {
       const res = await this.itemModel.findById(id);
