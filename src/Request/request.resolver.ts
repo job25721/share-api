@@ -7,7 +7,9 @@ import {
   Query,
   ResolveField,
   Resolver,
+  Subscription,
 } from '@nestjs/graphql';
+import { PubSub } from 'apollo-server-express';
 import { ChatService } from 'src/Chat/chat.service';
 import { Chat } from 'src/Chat/dto/chat.model';
 import { AuthGuard } from 'src/User/auth.guard';
@@ -21,12 +23,15 @@ import { RequestService } from './request.service';
 
 @Resolver(() => Request)
 export class RequestResolver {
+  private pubSub: PubSub;
   constructor(
     private readonly requestService: RequestService,
     private readonly userService: UserService,
     private readonly itemService: ItemService,
     private readonly chatService: ChatService,
-  ) {}
+  ) {
+    this.pubSub = new PubSub();
+  }
 
   @UseGuards(new AuthGuard())
   @Mutation(() => Request)
@@ -35,38 +40,45 @@ export class RequestResolver {
     { itemId, reason, wantedRate }: RequestInput,
     @Context('user') user,
   ): Promise<Request> {
-    return await this.requestService.addRequest({
+    const newRequest = await this.requestService.addRequest({
       itemId,
       requestPersonId: user.id,
       reason,
       wantedRate,
     });
+    this.pubSub.publish('newRequestAdded', newRequest);
+    return newRequest;
+  }
+
+  @Subscription(() => Request)
+  newRequestAdded() {
+    return this.pubSub.asyncIterator('newRequestAdded');
   }
 
   @UseGuards(new AuthGuard())
-  @Mutation(() => Item)
+  @Mutation(() => Request)
   async acceptDelivered(
     @Args('reqData') data: RequestActivityDto,
     @Context('user') user,
-  ) {
+  ): Promise<Request> {
     return await this.requestService.acceptDelivered(data, user.id);
   }
 
   @UseGuards(new AuthGuard())
-  @Mutation(() => Item)
+  @Mutation(() => Request)
   async acceptRequest(
     @Args('reqData') data: RequestActivityDto,
     @Context('user') user,
-  ): Promise<Item> {
+  ): Promise<Request> {
     return await this.requestService.acceptRequest(data, user.id);
   }
 
   @UseGuards(new AuthGuard())
-  @Mutation(() => Item)
+  @Mutation(() => Request)
   async rejectRequest(
     @Args('reqData') data: RequestActivityDto,
     @Context('user') user,
-  ): Promise<Item> {
+  ): Promise<Request> {
     return await this.requestService.rejectRequest(data, user.id);
   }
 

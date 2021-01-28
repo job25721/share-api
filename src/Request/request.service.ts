@@ -120,7 +120,7 @@ export class RequestService {
     );
   }
 
-  async acceptRequest(data: RequestActivityDto, actorId): Promise<Item> {
+  async acceptRequest(data: RequestActivityDto, actorId): Promise<Request> {
     const reqId = data.reqId;
     const actionPersonId = actorId;
 
@@ -146,22 +146,27 @@ export class RequestService {
       const giver = await this.userService.findById(actionPersonId);
       const receiver = await this.userService.findById(requestPersonId);
       req.status = requestStatus.accepted;
-      await req.save();
+      await this.requestModel.updateMany(
+        { itemId },
+        { status: requestStatus.rejected },
+      );
+      // await this.chatService.disableChat({chatUid :  })
       await this.itemLogService.addLog({
         itemId: itemId,
         actorId: actionPersonId,
         action: `${giver.info.firstName} ได้ยินยอมส่งต่อของให้ ${receiver.info.firstName}`,
       });
-      return await this.itemService.changeItemStatus({
+      await this.itemService.changeItemStatus({
         itemId,
         status: itemStatus.accepted,
       });
+      return req.save();
     } catch (err) {
       return err;
     }
   }
 
-  async acceptDelivered(data: RequestActivityDto, actorId): Promise<Item> {
+  async acceptDelivered(data: RequestActivityDto, actorId): Promise<Request> {
     const reqId = data.reqId;
     const actionPersonId = actorId;
 
@@ -197,17 +202,18 @@ export class RequestService {
         } ได้ถุกปิด`,
       });
       req.status = requestStatus.delivered;
-      await req.save();
-      return await this.itemService.changeItemStatus({
+
+      await this.itemService.changeItemStatus({
         itemId,
         status: itemStatus.delivered,
       });
+      return req.save();
     } catch (err) {
       return err;
     }
   }
 
-  async rejectRequest(data: RequestActivityDto, actorId): Promise<Item> {
+  async rejectRequest(data: RequestActivityDto, actorId): Promise<Request> {
     const reqId = data.reqId;
     const actionPersonId = actorId;
     try {
@@ -239,9 +245,7 @@ export class RequestService {
         actorId: actionPersonId,
         action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกปิด`,
       });
-      await request.save();
-      return item;
-
+      return request.save();
       //maybe send noti to reciever
       //not imprement yet
       /*
