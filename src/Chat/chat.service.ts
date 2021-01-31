@@ -8,14 +8,31 @@ import { Chat, ChatMessage } from './dto/chat.model';
 export class ChatService {
   constructor(@InjectModel('Chat') private chatModel: Model<ChatDocument>) {}
 
-  async create(): Promise<Chat> {
+  async create(itemId: Types.ObjectId): Promise<Chat> {
     const chatRoomData: Chat = {
       data: [],
       active: true,
       lastestUpdate: Date.now(),
+      for: itemId,
     };
     const newChatRoom = new this.chatModel(chatRoomData);
-    return await newChatRoom.save();
+    return newChatRoom.save();
+  }
+
+  async updateReqId(chat_uid: Types.ObjectId, itemId: string): Promise<Chat> {
+    const chat = await this.chatModel.findById(chat_uid);
+    chat.for = Types.ObjectId(itemId);
+    return chat.save();
+  }
+
+  async disableManyChatByReqId(
+    itemId: Types.ObjectId,
+    activeChat_uid: Types.ObjectId,
+  ): Promise<void> {
+    await this.chatModel.updateMany(
+      { for: itemId, $nor: [{ _id: activeChat_uid }] },
+      { active: false },
+    );
   }
 
   async disableChat(queryData: { chatUid: Types.ObjectId }): Promise<void> {

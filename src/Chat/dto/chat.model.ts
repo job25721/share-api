@@ -21,6 +21,8 @@ export class Chat {
   data: ChatMessage[];
   @Field(() => Boolean)
   active: boolean;
+  @Field(() => String)
+  for: Types.ObjectId;
   @Field(() => Number)
   lastestUpdate: number;
 }

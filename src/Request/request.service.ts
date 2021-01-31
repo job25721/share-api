@@ -1,7 +1,6 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Item } from '../Item/dto/item.model';
 import { ItemService } from '../Item/item.service';
 import { itemStatus, requestStatus } from '../status';
 import { ItemLogService } from '../ItemLog/itemLog.service';
@@ -58,7 +57,7 @@ export class RequestService {
         }
 
         const receiver = await this.userService.findById(requestPersonId);
-        const newChat = await this.chatService.create();
+        const newChat = await this.chatService.create(itemId);
         const reqDto: Request = {
           itemId,
           requestPersonId,
@@ -71,16 +70,11 @@ export class RequestService {
         };
 
         const newRequest = new this.requestModel(reqDto);
-        await this.itemLogService.addLog({
-          itemId,
-          actorId: requestPersonId,
-          action: `${receiver.info.firstName} ทำการรีเควสของชิ้นนี้ reqid:${newRequest.id}`,
-        });
 
         await this.itemLogService.addLog({
           itemId,
           actorId: requestPersonId,
-          action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกเพิ่มขึ้น`,
+          action: `${receiver.info.firstName} ทำการรีเควสของชิ้นนี้ reqid:${newRequest.id}`,
         });
 
         return await newRequest.save();
@@ -146,11 +140,12 @@ export class RequestService {
       const giver = await this.userService.findById(actionPersonId);
       const receiver = await this.userService.findById(requestPersonId);
       req.status = requestStatus.accepted;
+      await req.save();
       await this.requestModel.updateMany(
-        { itemId },
+        { itemId, status: requestStatus.requested },
         { status: requestStatus.rejected },
       );
-      // await this.chatService.disableChat({chatUid :  })
+      await this.chatService.disableManyChatByReqId(itemId, req.chat_uid);
       await this.itemLogService.addLog({
         itemId: itemId,
         actorId: actionPersonId,
@@ -160,7 +155,7 @@ export class RequestService {
         itemId,
         status: itemStatus.accepted,
       });
-      return req.save();
+      return req;
     } catch (err) {
       return err;
     }
@@ -194,13 +189,7 @@ export class RequestService {
         action: `${receiver.info.firstName} ได้รับของจาก ${giver.info.firstName} แล้ว สิ้นสุดกระบวนการ SHARE`,
       });
       await this.chatService.disableChat({ chatUid: chat_uid });
-      await this.itemLogService.addLog({
-        itemId: itemId,
-        actorId: requestPersonId,
-        action: `ห้องแชทสำหรับส่งต่อ ${
-          (await this.itemService.findById(itemId.toString())).name
-        } ได้ถุกปิด`,
-      });
+
       req.status = requestStatus.delivered;
 
       await this.itemService.changeItemStatus({
@@ -240,11 +229,7 @@ export class RequestService {
       });
       request.status = requestStatus.rejected;
       await this.chatService.disableChat({ chatUid: request.chat_uid });
-      await this.itemLogService.addLog({
-        itemId: itemId,
-        actorId: actionPersonId,
-        action: `ห้องแชทสำหรับส่งต่อ ${item.name} ได้ถุกปิด`,
-      });
+
       return request.save();
       //maybe send noti to reciever
       //not imprement yet

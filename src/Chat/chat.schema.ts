@@ -1,5 +1,5 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { Document } from 'mongoose';
+import { Document, Types } from 'mongoose';
 import { ChatMessage } from './dto/chat.model';
 
 @Schema()
@@ -8,6 +8,8 @@ class Chat {
   data: ChatMessage[];
   @Prop()
   active: boolean;
+  @Prop({ type: Types.ObjectId, ref: 'Item' })
+  for: Types.ObjectId;
   @Prop()
   lastestUpdate: number;
 }
