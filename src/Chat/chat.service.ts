@@ -57,7 +57,7 @@ export class ChatService {
     });
   }
 
-  async saveChat(queryData: {
+  async addMessage(queryData: {
     chatUid: Types.ObjectId;
     payload: ChatMessage;
   }): Promise<Chat> {

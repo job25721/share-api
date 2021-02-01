@@ -23,4 +23,6 @@ export class Item {
   createdDate: Date;
   @Field(() => String)
   logId: Types.ObjectId | string;
+  @Field(() => String)
+  acceptedTo: Types.ObjectId;
 }

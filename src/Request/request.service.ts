@@ -58,6 +58,15 @@ export class RequestService {
 
         const receiver = await this.userService.findById(requestPersonId);
         const newChat = await this.chatService.create(itemId);
+        await this.chatService.addMessage({
+          chatUid: newChat.id,
+          payload: {
+            from: requestPersonId.toHexString().toString(),
+            to: item.ownerId.toHexString().toString(),
+            message: `${receiver.info.firstName} ได้ส่งคำขอ ${item.name} ของคุณ\nเหตุผล : ${reason}\nระดับความต้องการ ${wantedRate}`,
+            timestamp: new Date(Date.now()),
+          },
+        });
         const reqDto: Request = {
           itemId,
           requestPersonId,
@@ -82,6 +91,8 @@ export class RequestService {
         throw new Error(`you has exist request an item ${itemId}`);
       }
     } catch (err) {
+      console.log(err);
+
       return err;
     }
   }
@@ -155,6 +166,7 @@ export class RequestService {
         itemId,
         status: itemStatus.accepted,
       });
+      await this.itemService.updateAcceptedToPerson(itemId, requestPersonId);
       return req;
     } catch (err) {
       return err;

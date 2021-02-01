@@ -85,4 +85,9 @@ export class ItemResolver {
   async log(@Parent() { logId }: Item): Promise<ItemLog> {
     return await this.itemLogService.findById(logId);
   }
+
+  @ResolveField(() => User)
+  async acceptedToPerson(@Parent() { acceptedTo }: Item): Promise<User> {
+    return await this.userService.findById(acceptedTo);
+  }
 }

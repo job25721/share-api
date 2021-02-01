@@ -60,6 +60,7 @@ export class ItemService {
     newItem.createdDate = now;
     newItem.status = itemStatus.available;
     newItem.ownerId = Types.ObjectId(userId);
+    newItem.acceptedTo = null;
     try {
       //addLog
       const itemLog = await this.itemLogService.InitLog({
@@ -87,6 +88,23 @@ export class ItemService {
       const res = await this.itemModel.findById(itemId);
       res.status = status;
       return res.save();
+    } catch (error) {
+      return error;
+    }
+  }
+
+  async updateAcceptedToPerson(
+    itemId: Types.ObjectId,
+    reqUser: Types.ObjectId,
+  ): Promise<void> {
+    try {
+      const item = await this.itemModel.findById(itemId);
+      if (item) {
+        item.acceptedTo = reqUser;
+        await item.save();
+      } else {
+        throw new Error('No such item to update acceptedPerson');
+      }
     } catch (error) {
       return error;
     }
