@@ -86,8 +86,8 @@ export class ItemResolver {
     return await this.itemLogService.findById(logId);
   }
 
-  @ResolveField(() => User)
-  async acceptedToPerson(@Parent() { acceptedTo }: Item): Promise<User> {
+  @ResolveField(() => User, { nullable: true })
+  async acceptedToPerson(@Parent() { acceptedTo }: Item): Promise<User | null> {
     return await this.userService.findById(acceptedTo);
   }
 }
