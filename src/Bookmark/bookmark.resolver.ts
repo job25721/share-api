@@ -5,7 +5,6 @@ import { Bookmark } from './dto/bookmark.model';
 import { Item } from '../Item/dto/item.model';
 import { AuthGuard } from '../User/auth.guard';
 
-import { ItemInput } from '../Item/dto/item.input';
 import { Types } from 'mongoose';
 
 @Resolver(() => Bookmark)
