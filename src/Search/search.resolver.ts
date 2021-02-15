@@ -7,7 +7,7 @@ export class SearchResolver {
   constructor(private readonly searchService: SearchService) {}
 
   @Query(() => [Item])
-  async findItem(@Args('searchKey') searchKey: string): Promise<Item[]> {
+  async searchItem(@Args('searchKey') searchKey: string): Promise<Item[]> {
     return this.searchService.searchByKeyword(searchKey);
   }
 }

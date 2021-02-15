@@ -3,13 +3,13 @@ import { Document, Types } from 'mongoose';
 
 @Schema()
 class Item {
-  @Prop()
+  @Prop({ index: true, unique: true })
   name: string;
-  @Prop()
+  @Prop({ index: true })
   description: string;
-  @Prop()
+  @Prop({ index: true })
   category: string;
-  @Prop()
+  @Prop({ index: true })
   tags: string[];
   @Prop({ type: Types.ObjectId, ref: 'User' })
   ownerId: Types.ObjectId;
@@ -26,9 +26,4 @@ class Item {
 }
 
 export type ItemDocument = Item & Document;
-export const ItemSchema = SchemaFactory.createForClass(Item).index({
-  name: 'text',
-  description: 'text',
-  category: 'text',
-  tags: 'text',
-});
+export const ItemSchema = SchemaFactory.createForClass(Item);

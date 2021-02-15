@@ -127,8 +127,14 @@ export class ItemService {
   }
 
   async searchItem(searchKey: string): Promise<Item[]> {
+    const regexExpresstion = { $regex: new RegExp(searchKey), $options: 'i' };
     return this.itemModel.find({
-      $text: { $search: searchKey },
+      $or: [
+        { name: regexExpresstion },
+        { description: regexExpresstion },
+        { category: regexExpresstion },
+        { tags: { $elemMatch: regexExpresstion } },
+      ],
     });
   }
 }
