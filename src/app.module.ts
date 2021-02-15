@@ -20,13 +20,8 @@ import { SearchModule } from './Search/search.module';
       autoSchemaFile: 'schema.gql',
       debug: false,
       playground: true,
-      context: async ({ req, connection }) => {
-        if (connection) {
-          return connection.context;
-        } else {
-          return { headers: req.headers };
-        }
-      },
+      context: async ({ req, connection }) =>
+        connection ? connection.context : { headers: req.headers },
     }),
     MongooseModule.forRoot(
       `mongodb+srv://${process.env.MONGO_USER}:${process.env.MONGO_PASS}@cluster0.h3ocx.mongodb.net/${process.env.DB}?retryWrites=true&w=majority`,

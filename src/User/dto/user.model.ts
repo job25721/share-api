@@ -28,3 +28,13 @@ export class User {
   @Field(() => UserInfo)
   info: UserInfo;
 }
+
+@ObjectType()
+export class FindUserResponse {
+  @Field(() => ID)
+  id?: Types.ObjectId;
+  @Field(() => String)
+  avatar: string;
+  @Field(() => UserInfo)
+  info: UserInfo;
+}

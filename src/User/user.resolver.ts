@@ -1,7 +1,7 @@
 import { Args, Context, Mutation, Query, Resolver } from '@nestjs/graphql';
 import { AuthInput } from './dto/auth.input';
 import { NewUser } from './dto/new-user';
-import { User } from './dto/user.model';
+import { FindUserResponse, User } from './dto/user.model';
 import { UserService } from './user.service';
 import { UseGuards } from '@nestjs/common';
 import { AuthGuard } from './auth.guard';
@@ -23,5 +23,10 @@ export class UserResolver {
   @Query(() => User)
   async getMyInfo(@Context('user') user): Promise<User> {
     return this.userService.getMyInfo(user.id);
+  }
+
+  @Query(() => FindUserResponse)
+  getUserById(@Args('userID') userID: string): Promise<FindUserResponse> {
+    return this.userService.findUserWithLimitedInfo(userID);
   }
 }

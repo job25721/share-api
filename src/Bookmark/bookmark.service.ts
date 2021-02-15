@@ -30,7 +30,7 @@ export class BookmarkService {
         const { id } = await this.init({ userId });
         const bookmark = await this.bookmarkModel.findById(id);
         bookmark.items = [...bookmark.items, itemId];
-        return await bookmark.save();
+        return bookmark.save();
       } else {
         const hasBookmarked = existDoc.items.some(
           (item) =>
@@ -41,7 +41,7 @@ export class BookmarkService {
         }
         existDoc.items = [...existDoc.items, itemId];
       }
-      return await existDoc.save();
+      return existDoc.save();
     } catch (err) {
       return err;
     }

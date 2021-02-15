@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
 import { AuthInput } from './dto/auth.input';
 import { NewUser } from './dto/new-user';
-import { User } from './dto/user.model';
+import { FindUserResponse, User } from './dto/user.model';
 import { UserDocument } from './user.schema';
 import { hash, compare } from 'bcrypt';
 import * as jwt from 'jsonwebtoken';
@@ -54,5 +54,15 @@ export class UserService {
 
   async findById(id: Types.ObjectId | string): Promise<User> {
     return this.userModel.findById(id);
+  }
+
+  async findUserWithLimitedInfo(id: string): Promise<FindUserResponse> {
+    const user = await this.userModel.findById(id);
+
+    return {
+      id: user.id,
+      avatar: user.avatar,
+      info: user.info,
+    };
   }
 }

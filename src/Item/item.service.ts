@@ -46,6 +46,12 @@ export class ItemService {
       .sort({ createdDate: -1 });
   }
 
+  async findMyAllReceivedItem(acceptedToId: string): Promise<Item[]> {
+    return this.itemModel
+      .find({ acceptedTo: Types.ObjectId(acceptedToId) })
+      .sort({ createdDate: -1 });
+  }
+
   async findMyItem(data: { ownerId: string; itemId: string }): Promise<Item> {
     const { ownerId, itemId } = data;
     return this.itemModel.findOne({

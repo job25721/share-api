@@ -55,6 +55,12 @@ export class ItemResolver {
   }
 
   @UseGuards(new AuthGuard())
+  @Query(() => [Item])
+  async getMyReceivedItem(@Context('user') user): Promise<Item[]> {
+    return this.itemService.findMyAllReceivedItem(user.id);
+  }
+
+  @UseGuards(new AuthGuard())
   @Mutation(() => Item)
   async updateItemStatus(@Args('data') data: ChangeStatus): Promise<Item> {
     return await this.itemService.changeItemStatus(data);
