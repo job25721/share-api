@@ -129,11 +129,16 @@ export class ItemService {
   async searchItem(searchKey: string): Promise<Item[]> {
     const regexExpresstion = { $regex: new RegExp(searchKey), $options: 'i' };
     return this.itemModel.find({
-      $or: [
-        { name: regexExpresstion },
-        { description: regexExpresstion },
-        { category: regexExpresstion },
-        { tags: { $elemMatch: regexExpresstion } },
+      $and: [
+        {
+          $or: [
+            { name: regexExpresstion },
+            { description: regexExpresstion },
+            { category: regexExpresstion },
+            { tags: searchKey },
+          ],
+        },
+        { status: itemStatus.available },
       ],
     });
   }
