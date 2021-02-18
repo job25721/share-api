@@ -14,6 +14,8 @@ class User {
   avatar: string;
   @Prop()
   info: UserInfo;
+  @Prop()
+  facebookId: string;
 }
 
 export type UserDocument = User & Document;

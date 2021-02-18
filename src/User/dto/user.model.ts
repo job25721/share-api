@@ -7,9 +7,9 @@ export class UserInfo {
   firstName: string;
   @Field(() => String)
   lastName: string;
-  @Field(() => Date)
+  @Field(() => Date, { nullable: true })
   birthDate: Date;
-  @Field(() => Number)
+  @Field(() => Number, { nullable: true })
   age: number;
 }
 
@@ -17,16 +17,18 @@ export class UserInfo {
 export class User {
   @Field(() => ID)
   id?: Types.ObjectId;
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   username: string;
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   password: string;
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   email: string;
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   avatar: string;
   @Field(() => UserInfo)
   info: UserInfo;
+  @Field(() => String, { nullable: true })
+  facebookId: string;
 }
 
 @ObjectType()

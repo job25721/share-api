@@ -19,10 +19,23 @@ export class UserResolver {
     return await this.userService.login(auth);
   }
 
+  @Mutation(() => String)
+  async facebookSign(
+    @Args('fbAccessToken') fbAccessToken: string,
+  ): Promise<string> {
+    return this.userService.facebookSign(fbAccessToken);
+  }
+
   @UseGuards(new AuthGuard())
   @Query(() => User)
   async getMyInfo(@Context('user') user): Promise<User> {
     return this.userService.getMyInfo(user.id);
+  }
+
+  @Query(() => String)
+  async testSess(@Context('user') ctx): Promise<string> {
+    console.log(ctx);
+    return 'hello';
   }
 
   @Query(() => FindUserResponse)

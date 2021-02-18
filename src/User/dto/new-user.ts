@@ -7,21 +7,23 @@ class newUserInfo {
   @Field(() => String)
   lastName: string;
   @Field(() => Date, { nullable: true })
-  birthDate: Date;
+  birthDate?: Date;
   @Field(() => Number, { nullable: true })
-  age: number;
+  age?: number;
 }
 
 @InputType()
 export class NewUser {
   @Field(() => String)
-  username: string;
+  username?: string;
   @Field(() => String)
-  password: string;
+  password?: string;
   @Field(() => String, { nullable: true })
   email: string;
   @Field(() => String, { nullable: true })
   avatar: string;
   @Field(() => newUserInfo, { nullable: true })
   info: newUserInfo;
+  @Field(() => String)
+  facebookId?: string;
 }
