@@ -32,6 +32,10 @@ export class ChatSocketResponse {
   @Field(() => String)
   chatRoomId: string;
   @Field(() => String)
+  itemId: string;
+  @Field(() => String)
+  requestId: string;
+  @Field(() => String)
   from: string;
   @Field(() => String)
   message: string;

@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { PubSub } from 'apollo-server-express';
 import { Model, Types } from 'mongoose';
+import { RequestService } from 'src/Request/request.service';
 import { ChatDocument } from './chat.schema';
 import { SendMessage } from './dto/chat.input';
 import { Chat, ChatMessage, ChatSocketResponse } from './dto/chat.model';
@@ -9,7 +10,10 @@ import { Chat, ChatMessage, ChatSocketResponse } from './dto/chat.model';
 @Injectable()
 export class ChatService {
   private pubSub: PubSub;
-  constructor(@InjectModel('Chat') private chatModel: Model<ChatDocument>) {
+  constructor(
+    @InjectModel('Chat') private chatModel: Model<ChatDocument>,
+    private readonly requestService: RequestService,
+  ) {
     this.pubSub = new PubSub();
   }
 
@@ -86,9 +90,12 @@ export class ChatService {
       chat.data = [...chat.data, messagePayload];
       chat.lastestUpdate = chat.data[chat.data.length - 1].timestamp.getTime();
       await chat.save();
+      const { id } = await this.requestService.findByChat(chat.id);
       const ChatSocketResponse: ChatSocketResponse = {
         chatRoomId,
         ...messagePayload,
+        itemId: chat.for.toHexString().toString(),
+        requestId: id,
       };
       this.pubSub.publish('newDirectMessage', {
         newDirectMessage: ChatSocketResponse,

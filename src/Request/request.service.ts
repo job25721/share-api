@@ -107,6 +107,10 @@ export class RequestService {
     }
   }
 
+  async findByChat(chat_uid: string): Promise<Request> {
+    return this.requestModel.findOne({ chat_uid: Types.ObjectId(chat_uid) });
+  }
+
   async findMyRequests(myId: string): Promise<Request[]> {
     return this.requestModel.find({
       requestToPersonId: Types.ObjectId(myId),
