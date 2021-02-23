@@ -26,3 +26,17 @@ export class Chat {
   @Field(() => Number)
   lastestUpdate: number;
 }
+
+@ObjectType()
+export class ChatSocketResponse {
+  @Field(() => String)
+  chatRoomId: string;
+  @Field(() => String)
+  from: string;
+  @Field(() => String)
+  message: string;
+  @Field(() => String)
+  to: string;
+  @Field(() => Date)
+  timestamp: Date;
+}

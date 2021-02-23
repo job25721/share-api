@@ -252,4 +252,26 @@ export class RequestService {
       return error;
     }
   }
+
+  async validateChatWithUserId(
+    chatId: string,
+    userId: string,
+  ): Promise<boolean> {
+    try {
+      const request = await this.requestModel.findOne({
+        chat_uid: Types.ObjectId(chatId),
+        $or: [
+          { requestPersonId: Types.ObjectId(userId) },
+          { requestToPersonId: Types.ObjectId(userId) },
+        ],
+      });
+
+      if (request) {
+        return true;
+      }
+      return false;
+    } catch (err) {
+      return err;
+    }
+  }
 }

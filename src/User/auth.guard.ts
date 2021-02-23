@@ -7,6 +7,7 @@ import {
 } from '@nestjs/common';
 import { GqlExecutionContext } from '@nestjs/graphql';
 import * as jwt from 'jsonwebtoken';
+import { UserService } from './user.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

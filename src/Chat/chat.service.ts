@@ -1,12 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { PubSub } from 'apollo-server-express';
 import { Model, Types } from 'mongoose';
 import { ChatDocument } from './chat.schema';
-import { Chat, ChatMessage } from './dto/chat.model';
+import { SendMessage } from './dto/chat.input';
+import { Chat, ChatMessage, ChatSocketResponse } from './dto/chat.model';
 
 @Injectable()
 export class ChatService {
-  constructor(@InjectModel('Chat') private chatModel: Model<ChatDocument>) {}
+  private pubSub: PubSub;
+  constructor(@InjectModel('Chat') private chatModel: Model<ChatDocument>) {
+    this.pubSub = new PubSub();
+  }
 
   async create(itemId: Types.ObjectId): Promise<Chat> {
     const chatRoomData: Chat = {
@@ -66,9 +71,35 @@ export class ChatService {
       if (chat === null) throw new Error('no this chat id');
       chat.lastestUpdate = Date.now();
       chat.data = [...chat.data, queryData.payload];
-      return await chat.save();
+      return chat.save();
     } catch (err) {
       return err;
     }
+  }
+
+  async sendMessage(payload: SendMessage): Promise<ChatMessage> {
+    const { chatRoomId, messagePayload } = payload;
+    try {
+      const chat = await this.chatModel.findById(chatRoomId);
+      if (chat === null) throw new Error('no chat room');
+      else if (!chat.active) throw new Error('chat is inactive');
+      chat.data = [...chat.data, messagePayload];
+      chat.lastestUpdate = chat.data[chat.data.length - 1].timestamp.getTime();
+      await chat.save();
+      const ChatSocketResponse: ChatSocketResponse = {
+        chatRoomId,
+        ...messagePayload,
+      };
+      this.pubSub.publish('newDirectMessage', {
+        newDirectMessage: ChatSocketResponse,
+      });
+      return payload.messagePayload;
+    } catch (err) {
+      return err;
+    }
+  }
+
+  newDirectMessage(): AsyncIterator<ChatSocketResponse> {
+    return this.pubSub.asyncIterator<ChatSocketResponse>('newDirectMessage');
   }
 }
