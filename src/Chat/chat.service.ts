@@ -66,6 +66,21 @@ export class ChatService {
     });
   }
 
+  async updateToReadAll(chat_uid: string, userId): Promise<Chat> {
+    try {
+      const chat = await this.chatModel.findById(Types.ObjectId(chat_uid));
+      if (!chat) {
+        throw new Error('no chat id');
+      }
+      chat.data = chat.data.map((data) =>
+        data.to === userId ? { ...data, hasReaded: true } : data,
+      );
+      return chat.save();
+    } catch (error) {
+      return error;
+    }
+  }
+
   async addMessage(queryData: {
     chatUid: Types.ObjectId;
     payload: ChatMessage;
@@ -87,7 +102,7 @@ export class ChatService {
       const chat = await this.chatModel.findById(chatRoomId);
       if (chat === null) throw new Error('no chat room');
       else if (!chat.active) throw new Error('chat is inactive');
-      chat.data = [...chat.data, messagePayload];
+      chat.data = [...chat.data, { ...messagePayload, hasReaded: false }];
       chat.lastestUpdate = chat.data[chat.data.length - 1].timestamp.getTime();
       await chat.save();
       const { id } = await this.requestService.findByChat(chat.id);
@@ -96,11 +111,12 @@ export class ChatService {
         ...messagePayload,
         itemId: chat.for.toHexString().toString(),
         requestId: id,
+        hasReaded: false,
       };
       this.pubSub.publish('newDirectMessage', {
         newDirectMessage: ChatSocketResponse,
       });
-      return payload.messagePayload;
+      return { ...payload.messagePayload, hasReaded: false };
     } catch (err) {
       return err;
     }
