@@ -68,6 +68,7 @@ export class RequestService {
             to: item.ownerId.toHexString().toString(),
             message: `${receiver.info.firstName} ได้ส่งคำขอ ${item.name} ของคุณ\nเหตุผล : ${reason}\nระดับความต้องการ ${wantedRate}`,
             timestamp: new Date(Date.now()),
+            hasReaded: false,
           },
         });
         const reqDto: Request = {
