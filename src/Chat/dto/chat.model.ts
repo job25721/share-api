@@ -11,6 +11,8 @@ export class ChatMessage {
   message: string;
   @Field(() => Date)
   timestamp: Date;
+  @Field(() => Boolean)
+  hasReaded: boolean;
 }
 
 @ObjectType()
@@ -43,4 +45,6 @@ export class ChatSocketResponse {
   to: string;
   @Field(() => Date)
   timestamp: Date;
+  @Field(() => Boolean)
+  hasReaded: boolean;
 }
