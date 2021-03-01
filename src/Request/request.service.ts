@@ -9,9 +9,10 @@ import { RequestActivityDto } from './dto/request.input';
 import { Request } from './dto/request.model';
 import { RequestDocument } from './request.schema';
 import { ChatService } from 'src/Chat/chat.service';
-
+import { PubSub } from 'apollo-server-express';
 @Injectable()
 export class RequestService {
+  private pubSub: PubSub;
   constructor(
     @InjectModel('Request') private requestModel: Model<RequestDocument>,
     private readonly itemLogService: ItemLogService,
@@ -19,7 +20,9 @@ export class RequestService {
     private readonly userService: UserService,
     @Inject(forwardRef(() => ChatService))
     private readonly chatService: ChatService,
-  ) {}
+  ) {
+    this.pubSub = new PubSub();
+  }
 
   async addRequest(data: {
     itemId: string;
@@ -85,8 +88,9 @@ export class RequestService {
           actorId: requestPersonId,
           action: `${receiver.info.firstName} ทำการรีเควสของชิ้นนี้ reqid:${newRequest.id}`,
         });
-
-        return await newRequest.save();
+        await newRequest.save();
+        this.pubSub.publish('newRequest', { newRequest });
+        return newRequest;
       } else {
         throw new Error(`you has exist request an item ${itemId}`);
       }
@@ -277,5 +281,9 @@ export class RequestService {
     } catch (err) {
       return err;
     }
+  }
+
+  newReuest(): AsyncIterator<Request> {
+    return this.pubSub.asyncIterator<Request>('newRequest');
   }
 }

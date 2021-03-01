@@ -105,6 +105,11 @@ export class RequestResolver {
     return this.requestService.findMySuccessRequests(user.id);
   }
 
+  @Subscription(() => Request)
+  newRequest(): AsyncIterator<Request> {
+    return this.requestService.newReuest();
+  }
+
   @ResolveField(() => Chat)
   chat(@Parent() { chat_uid }: Request): Promise<Chat> {
     return this.chatService.findById(chat_uid);
