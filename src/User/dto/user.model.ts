@@ -16,7 +16,7 @@ export class UserInfo {
 @ObjectType()
 export class User {
   @Field(() => ID)
-  id?: Types.ObjectId;
+  id?: string;
   @Field(() => String, { nullable: true })
   username: string;
   @Field(() => String, { nullable: true })

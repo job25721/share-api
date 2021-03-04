@@ -22,3 +22,11 @@ export class Request {
   @Field(() => String)
   chat_uid: Types.ObjectId;
 }
+
+@ObjectType()
+export class RequestUpdatedNotify {
+  @Field(() => String)
+  notifyTo: string;
+  @Field(() => Request)
+  request: Request;
+}

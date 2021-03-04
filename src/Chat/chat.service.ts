@@ -100,8 +100,11 @@ export class ChatService {
     const { chatRoomId, messagePayload } = payload;
     try {
       const chat = await this.chatModel.findById(chatRoomId);
+      console.log(chat);
+
       if (chat === null) throw new Error('no chat room');
       else if (!chat.active) throw new Error('chat is inactive');
+
       chat.data = [...chat.data, { ...messagePayload, hasReaded: false }];
       chat.lastestUpdate = chat.data[chat.data.length - 1].timestamp.getTime();
       await chat.save();
@@ -118,6 +121,8 @@ export class ChatService {
       });
       return { ...payload.messagePayload, hasReaded: false };
     } catch (err) {
+      console.log(err);
+
       return err;
     }
   }
