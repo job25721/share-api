@@ -18,7 +18,7 @@ import { ItemService } from '../Item/item.service';
 import { User } from '../User/dto/user.model';
 import { UserService } from '../User/user.service';
 import { RequestActivityDto, RequestInput } from './dto/request.input';
-import { Request } from './dto/request.model';
+import { Request, RequestUpdatedNotify } from './dto/request.model';
 import { RequestService } from './request.service';
 
 @Resolver(() => Request)
@@ -40,19 +40,17 @@ export class RequestResolver {
     { itemId, reason, wantedRate }: RequestInput,
     @Context('user') user,
   ): Promise<Request> {
-    const newRequest = await this.requestService.addRequest({
+    return this.requestService.addRequest({
       itemId,
       requestPersonId: user.id,
       reason,
       wantedRate,
     });
-    this.pubSub.publish('newRequestAdded', newRequest);
-    return newRequest;
   }
 
-  @Subscription(() => Request)
-  newRequestAdded() {
-    return this.pubSub.asyncIterator('newRequestAdded');
+  @Subscription(() => RequestUpdatedNotify)
+  requestUpdated(): AsyncIterator<RequestUpdatedNotify> {
+    return this.requestService.requestUpdated();
   }
 
   @UseGuards(new AuthGuard())
@@ -103,6 +101,11 @@ export class RequestResolver {
   @Query(() => [Request])
   getMySuccessRequests(@Context('user') user): Promise<Request[]> {
     return this.requestService.findMySuccessRequests(user.id);
+  }
+
+  @Subscription(() => Request)
+  newRequest(): AsyncIterator<Request> {
+    return this.requestService.newRequest();
   }
 
   @ResolveField(() => Chat)

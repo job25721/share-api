@@ -16,7 +16,7 @@ import { RequestService } from 'src/Request/request.service';
 import { AuthGuard } from 'src/User/auth.guard';
 import { User } from 'src/User/dto/user.model';
 import { ChatService } from './chat.service';
-import { SendMessage, MessagePayload } from './dto/chat.input';
+import { MessagePayload } from './dto/chat.input';
 import { Chat, ChatMessage, ChatSocketResponse } from './dto/chat.model';
 
 @Resolver(() => Chat)
@@ -41,6 +41,15 @@ export class ChatResolver {
   @Query(() => Chat)
   async getChatById(@Args('chatRoomId') chatRoomId: string): Promise<Chat> {
     return this.chatService.findById(Types.ObjectId(chatRoomId));
+  }
+
+  @UseGuards(new AuthGuard())
+  @Mutation(() => Chat)
+  async updateChatToReadAll(
+    @Context('user') user,
+    @Args('chatRoomid') chatRoomId: string,
+  ): Promise<Chat> {
+    return this.chatService.updateToReadAll(chatRoomId, user.id);
   }
 
   @UseGuards(new AuthGuard())
